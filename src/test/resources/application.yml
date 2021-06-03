@@ -1,0 +1,7 @@
+micronaut:
+  http:
+    client:
+      read-timeout: 30s
+
+gitlab:
+  url: "https://gitlab.com"

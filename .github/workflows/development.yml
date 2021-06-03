@@ -1,0 +1,78 @@
+name: "Continuous Integration"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: "Build code"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+      - name: "Cache dependencies"
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle
+            ${GITHUB_WORKSPACE}/.gradle
+            ~/.cache/pip/
+          key: ${{ runner.os }}-devex-development-java11
+      - name: "Install GraalVM"
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: '21.1.0'
+          java: 'java11'
+          arch: 'amd64'
+      - name: "Install native-image"
+        run: |
+          gu install native-image
+      - name: "Setup SSH"
+        run: |
+          mkdir -p ~/.ssh
+          cat .github/files/known_hosts > ~/.ssh/known_hosts
+          #echo "${ssh_config}" > ~/.ssh/config
+          echo "${bot_devex_ssh_private_key}" > ~/.ssh/id_rsa
+          chmod -R 500 ~/.ssh
+        env:
+          ssh_config: ${{ secrets.SSH_CONFIG }}
+          bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY }}
+      - name: "Gradle build"
+        run: ./gradlew build
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - name: "Publish Unit Test Results"
+        uses: EnricoMi/publish-unit-test-result-action/composite@v1
+        if: always()
+        with:
+          files: build/test-results/test/*.xml
+      - name: "Create native-image build config"
+        run: |
+          .github/scripts/create-native-image-build-config.sh
+          .github/scripts/merge-native-image-build-config.sh linux
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - name: "Gradle nativeImage"
+        run: ./gradlew nativeImage
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - name: "Run and test native binary"
+        run: .github/scripts/run-native-binary.sh
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
+        with:
+          add: "src/main/resources/META-INF/native-image"
+          author_name: "DevEx Bot"
+          author_email: "devex.bot@gmail.com"
+          default_author: "user_info"
+          message: "Update native-image build config"
+          branch: ${{ github.head_ref }}
+      - name: "Clean up"
+        if: ${{ always() }}
+        run: sudo rm -rf ~/.ssh
