@@ -1,10 +1,9 @@
-package devex.gitlab;
+package devex;
 
 import ch.qos.logback.core.joran.spi.JoranException;
-import devex.LoggingConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 
-public class GitlabTestBase {
+public class TestBase {
 
     @BeforeAll
     static void beforeAll() throws JoranException {

@@ -1,10 +1,11 @@
 package devex.gitlab;
 
+import devex.TestBase;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GitlabVersionTest extends GitlabTestBase {
+class GitlabVersionTest extends TestBase {
 
     @Test
     void versionIsBefore_patchVersion() {

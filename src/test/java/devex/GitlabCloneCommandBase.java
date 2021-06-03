@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GitlabCloneCommandBase {
+public class GitlabCloneCommandBase extends TestBase {
 
     public static final String PUBLIC_GROUP_NAME = "gitlab-clone-example";
     public static final String PUBLIC_GROUP_ID = "11961707";

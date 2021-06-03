@@ -1,5 +1,6 @@
 package devex.gitlab;
 
+import devex.TestBase;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @MicronautTest
 @Property(name = "gitlab.token") // clear the property
-class GitlabClientWithoutTokenTest extends GitlabTestBase {
+class GitlabClientWithoutTokenTest extends TestBase {
 
     public static final String PRIVATE_GROUP_ID = "12040044";
     public static final String PUBLIC_GROUP_ID = "11961707";

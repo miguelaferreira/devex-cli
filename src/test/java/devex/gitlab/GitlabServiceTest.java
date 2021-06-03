@@ -1,5 +1,6 @@
 package devex.gitlab;
 
+import devex.TestBase;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.reactivex.Flowable;
 import io.vavr.control.Either;
@@ -12,7 +13,7 @@ import javax.inject.Inject;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @MicronautTest
-class GitlabServiceTest extends GitlabTestBase {
+class GitlabServiceTest extends TestBase {
 
     public static final String GITLAB_GROUP_NAME = "gitlab-clone-example";
     public static final String GITLAB_GROUP_FULL_PATH = "gitlab-clone-example/sub-group-2/sub-group-3";

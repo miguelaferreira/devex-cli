@@ -1,5 +1,6 @@
 package devex.git;
 
+import devex.TestBase;
 import devex.gitlab.GitlabProject;
 import io.reactivex.Flowable;
 import io.vavr.collection.Stream;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jgit.submodule.SubmoduleStatusType.INITIALIZED;
 import static org.eclipse.jgit.submodule.SubmoduleStatusType.UNINITIALIZED;
 
-class GitServiceTest {
+class GitServiceTest extends TestBase {
 
     public static final String GITLAB_BOT_USERNAME = "devex-bot";
 

@@ -1,5 +1,6 @@
 package devex.gitlab;
 
+import devex.TestBase;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -13,7 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @MicronautTest
-class GitlabClientWithTokenTest extends GitlabTestBase {
+class GitlabClientWithTokenTest extends TestBase {
 
     public static final String PRIVATE_GROUP_ID = "12040044";
     public static final String PUBLIC_GROUP_ID = "11961707";
