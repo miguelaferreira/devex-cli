@@ -42,7 +42,8 @@ public class GitlabCloneCommand implements Runnable {
             order = 1,
             names = {"-c", "--clone-protocol"},
             description = "Chose the transport protocol used clone the project repositories. Valid values: ${COMPLETION-CANDIDATES}.",
-            defaultValue = "SSH"
+            defaultValue = "SSH",
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private GitCloneProtocol cloneProtocol;
 
@@ -50,7 +51,8 @@ public class GitlabCloneCommand implements Runnable {
             order = 2,
             names = {"-m", "--search-mode"},
             description = "Chose how the group is searched for. Groups can be searched by name or full path. Valid values: ${COMPLETION-CANDIDATES}.",
-            defaultValue = "NAME"
+            defaultValue = "NAME",
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private GitlabGroupSearchMode searchMode;
 
@@ -75,7 +77,7 @@ public class GitlabCloneCommand implements Runnable {
             paramLabel = "PATH",
             description = "The local path where to create the group clone.",
             defaultValue = ".",
-            showDefaultValue = CommandLine.Help.Visibility.ON_DEMAND
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private String localPath;
 
