@@ -255,62 +255,77 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"gitlab.clone.$GitServiceDefinitionClass",
+  "name":"devex.$DevexCommandDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"gitlab.clone.$GitlabClient$InterceptedDefinitionClass",
+  "name":"devex.$GitlabCloneCommandDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"gitlab.clone.$GitlabCloneCommandDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"gitlab.clone.$GitlabGroup$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"gitlab.clone.$GitlabProject$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"gitlab.clone.$GitlabServiceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"gitlab.clone.$GitlabVersion$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"gitlab.clone.GitService",
-  "fields":[{"name":"httpsPassword"}]
-},
-{
-  "name":"gitlab.clone.GitlabCloneCommand",
+  "name":"devex.DevexCommand",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
 },
 {
-  "name":"gitlab.clone.GitlabCloneCommand$AppVersionProvider",
+  "name":"devex.DevexCommand$AppVersionProvider",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"gitlab.clone.GitlabGroup",
+  "name":"devex.GitlabCloneCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"devex.GitlabCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.git.$GitServiceDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.git.GitService",
+  "fields":[{"name":"httpsPassword"}]
+},
+{
+  "name":"devex.gitlab.$GitlabClient$InterceptedDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.gitlab.$GitlabGroup$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.gitlab.$GitlabProject$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.gitlab.$GitlabServiceDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.gitlab.$GitlabVersion$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.gitlab.GitlabGroup",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "allDeclaredConstructors":true
 },
 {
-  "name":"gitlab.clone.GitlabProject",
+  "name":"devex.gitlab.GitlabProject",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "allDeclaredConstructors":true
 },
 {
-  "name":"gitlab.clone.GitlabVersion",
+  "name":"devex.gitlab.GitlabVersion",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "allDeclaredConstructors":true
@@ -1093,10 +1108,6 @@
   "name":"io.netty.channel.pool.SimpleChannelPool$1"
 },
 {
-  "name":"io.netty.channel.socket.nio.NioSocketChannel",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"io.netty.handler.codec.ByteToMessageDecoder",
   "methods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
@@ -1255,6 +1266,10 @@
 {
   "name":"java.nio.Buffer",
   "fields":[{"name":"address"}]
+},
+{
+  "name":"java.nio.ByteBuffer",
+  "methods":[{"name":"alignedSlice","parameterTypes":["int"] }]
 },
 {
   "name":"java.nio.DirectByteBuffer",
