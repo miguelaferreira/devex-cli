@@ -23,18 +23,14 @@ import java.util.Objects;
 public class GitService {
 
     private static final SshSessionFactory sshSessionFactory = new OverrideJschConfigSessionFactory();
+    public static final String HTTPS_USERNAME = "git";
 
     private GitCloneProtocol cloneProtocol = GitCloneProtocol.SSH;
-    private String httpsUsername = "";
     @Value("${gitlab.token:}")
     private String httpsPassword = "";
 
     public void setCloneProtocol(GitCloneProtocol cloneProtocol) {
         this.cloneProtocol = cloneProtocol;
-    }
-
-    public void setHttpsUsername(String httpsUsername) {
-        this.httpsUsername = httpsUsername;
     }
 
     protected void setHttpsPassword(String httpsPassword) {
@@ -95,10 +91,9 @@ public class GitService {
                 break;
             case HTTPS:
                 cloneCommand.setURI(project.getHttpUrlToRepo());
-                final String username = Objects.requireNonNullElse(httpsUsername, "");
                 final String password = Objects.requireNonNullElse(httpsPassword, "");
-                if (!username.isBlank() && !password.isBlank()) {
-                    cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(httpsUsername, httpsPassword));
+                if (!password.isBlank()) {
+                    cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(HTTPS_USERNAME, httpsPassword));
                 } else {
                     log.debug("Credentials for HTTPS remote not set, group to clone must be public.");
                 }

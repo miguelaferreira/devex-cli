@@ -23,8 +23,6 @@ import static org.eclipse.jgit.submodule.SubmoduleStatusType.UNINITIALIZED;
 
 class GitServiceTest extends TestBase {
 
-    public static final String GITLAB_BOT_USERNAME = "devex-bot";
-
     @TempDir
     File cloneDirectory;
     private String cloneDirectoryPath;
@@ -87,7 +85,6 @@ class GitServiceTest extends TestBase {
     void clonePrivateRepo_http_withSubmodule() throws GitAPIException {
         final GitService gitService = new GitService();
         gitService.setCloneProtocol(GitCloneProtocol.HTTPS);
-        gitService.setHttpsUsername(GITLAB_BOT_USERNAME);
         gitService.setHttpsPassword(gitlabBotPassword);
         final GitlabProject project = GitlabProject.builder()
                                                    .name("a-private-project")

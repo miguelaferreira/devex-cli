@@ -56,15 +56,6 @@ public class GitlabCloneCommand implements Runnable {
     )
     private GitlabGroupSearchMode searchMode;
 
-    @CommandLine.Option(
-            order = 3,
-            names = {"-u", "--https-username"},
-            description = "The username to authenticate with when the HTTPS clone protocol is selected. This option is required when cloning private groups, in which case the GitLab token will be used as the password.",
-            arity = "0..1",
-            interactive = true
-    )
-    private String httpsUsername;
-
     @CommandLine.Parameters(
             index = "0",
             paramLabel = "GROUP",
@@ -94,7 +85,6 @@ public class GitlabCloneCommand implements Runnable {
 
     private void configureGitService() {
         gitService.setCloneProtocol(cloneProtocol);
-        gitService.setHttpsUsername(httpsUsername);
     }
 
     private void cloneGroup() {
