@@ -1,0 +1,118 @@
+name: "Continuous Delivery"
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build_release:
+    name: "Build release"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - name: "[${{ runner.os }}] Checkout sources"
+        uses: actions/checkout@v2
+      - name: "[${{ runner.os }}] Cache dependencies"
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle
+            ${GITHUB_WORKSPACE}/.gradle
+          key: ${{ matrix.os }}-devex-release-java11
+      - name: "[${{ runner.os }}] Install GraalVM"
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: '21.1.0'
+          java: 'java11'
+          arch: 'amd64'
+      - name: "[${{ runner.os }}] Install native-image"
+        run: gu install native-image
+      - name: "[${{ runner.os }}] Setup SSH"
+        run: |
+          mkdir -p ~/.ssh
+          cat .github/files/known_hosts > ~/.ssh/known_hosts
+          echo "${bot_devex_ssh_private_key}" > ~/.ssh/id_rsa
+          chmod -R 500 ~/.ssh
+        env:
+          bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY }}
+      - name: "[${{ runner.os }}] Gradle build"
+        run: ./gradlew build nativeImage
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - name: "[${{ runner.os }}] Run and test native image"
+        run: .github/scripts/run-native-binary.sh
+        env:
+          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+      - name: "[${{ runner.os }}] Clean up"
+        if: ${{ always() }}
+        run: sudo rm -rf ~/.ssh
+      - name: '[${{ runner.os }}] Upload artifacts'
+        uses: actions/upload-artifact@v2
+        with:
+          name: devex-${{ runner.os }}
+          path: build/native-image/application
+          if-no-files-found: error
+
+  create_release:
+    name: "Create release"
+    needs: build_release
+    runs-on: ubuntu-latest
+    env:
+      release_body_file: "body.txt"
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+      - name: "Download all workflow run artifacts"
+        uses: actions/download-artifact@v2
+        with:
+          path: "artifacts"
+      - name: "Generate changelog"
+        id: changelog
+        uses: metcalfc/changelog-generator@v0.4.4
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Prepare release files"
+        id: release-files
+        run: |
+          version=${tag_ref/refs\/tags\//}
+
+          # Create sha256sum for each release file
+          mkdir release
+          cd artifacts
+          for file in */*; do release_name="$(dirname ${file})"; cp "${file}" "../release/${release_name}-${version}"; done
+          cd ../release
+          for file in *; do sha256sum "${file}" > "${file}.sha256sum"; done
+          tar czf all-files-${version}.tar.gz *
+          sha256sum all-files-${version}.tar.gz > all-files-${version}.tar.gz.sha256sum
+          cd ..
+
+          # Create release text
+          cat <<'EOF' > "${release_body_file}"
+          ## SHA 256
+          EOF
+
+          cd release
+          for file in *.sha256sum; do echo "- $(cat "${file}")" >> "../${release_body_file}"; done
+          cd ..
+
+          cat <<'EOF' >> "${release_body_file}"
+
+          ## Change log
+          EOF
+
+          echo "${change_log}" >> "${release_body_file}"
+        env:
+          tag_ref: ${{ github.ref }}
+          change_log: ${{ steps.changelog.outputs.changelog }}
+      - name: "Create release"
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: ${{ env.release_body_file }}
+          files: release/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

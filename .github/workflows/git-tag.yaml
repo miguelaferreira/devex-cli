@@ -1,0 +1,72 @@
+name: "Tag git"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    name: "Create git tag"
+    runs-on: ubuntu-latest
+    env:
+      tooling_dir: ${{ github.workspace }}/../tooling
+      ssh_dir: /home/runner/.ssh
+    if: "!contains(github.event.head_commit.message, 'Increment version')"
+    steps:
+      - name: "Cache tooling"
+        uses: actions/cache@v2
+        with:
+          path: ${tooling_dir}
+          key: ${{ runner.os }}-devex-git-tag
+      - name: "Setup tools"
+        run: |
+          mkdir -p ${tooling_dir}
+          cd ${tooling_dir}
+          wget --no-clobber https://github.com/miguelaferreira/semver_bash/archive/master.zip
+          unzip master.zip
+          cd semver_bash-master
+          sudo mv semver.sh bump.sh /bin
+          sudo chmod +x /bin/bump.sh
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+      - name: "Bump version number"
+        id: bump
+        run: |
+          version="$(cat ${version_file})"
+          bump.sh "${version}" > ${version_file}
+          echo "::set-output name=version-file::${version_file}"
+          echo "::set-output name=version::${version}"
+          echo "::set-output name=new-version::$(cat ${version_file})"
+        env:
+          version_file: VERSION
+      - name: "Configure git"
+        run: |
+          git remote rm origin
+          git remote add origin git@github.com:miguelaferreira/devex-cli.git
+          git config --global user.email "devex.bot@gmail.com"
+          git config --global user.name "DevEx Bot"
+          mkdir ${ssh_dir}
+          echo "${ssh_config}" > ${ssh_dir}/config
+          echo "${bot_devex_ssh_private_key}" > ${ssh_dir}/id_rsa
+          chmod -R 500 ${ssh_dir}
+        env:
+          ssh_config: ${{ secrets.SSH_CONFIG }}
+          bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY }}
+      - name: "Create tag"
+        run: |
+          git tag "${tag}"
+          git push --tags
+        env:
+          tag: "v${{ steps.bump.outputs.version }}"
+      - name: "Create bump commit"
+        run: |
+          git push --set-upstream origin main
+          git add ${version_file}
+          git commit -m "${commit_message}"
+          git push
+        env:
+          version_file: ${{ steps.bump.outputs.version-file }}
+          commit_message: "Increment version from '${{ steps.bump.outputs.version }}' to '${{ steps.bump.outputs.new-version }}'"
+      - name: "Clean up"
+        run: sudo rm -rf ${ssh_dir}
