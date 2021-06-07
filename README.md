@@ -1,6 +1,7 @@
 [![Continuous Integration](https://github.com/miguelaferreira/devex/actions/workflows/development.yml/badge.svg)](https://github.com/miguelaferreira/devex/actions/workflows/development.yml)
 [![Continuous Delivery](https://github.com/miguelaferreira/devex/actions/workflows/create-release.yaml/badge.svg)](https://github.com/miguelaferreira/devex/actions/workflows/create-release.yaml)
-[![Known Vulnerabilities](https://snyk.io/test/github/miguelaferreira/devex/badge.svg)](https://snyk.io/test/github/miguelaferreira/devex)
+[![CodeQL](https://github.com/miguelaferreira/devex-cli/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/miguelaferreira/devex-cli/actions/workflows/codeql-analysis.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/miguelaferreira/devex/badge.svg)](https://snyk.io/test/github/miguelaferreira/devex-cli)
 
 # devex-cli
 
