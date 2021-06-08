@@ -149,7 +149,7 @@ jobs:
           body: |
             This PR
             - Updates devex-cli formula to version ${{ env.new_version }}
-            - All files package sha is ${{ env.all_files_sha }
+            - All files package sha is ${{ env.all_files_sha }}
             - Auto-generated from [devex-cli Continuous Delivery workflow][1]
 
             [1]: https://github.com/miguelaferreira/devex-cli/actions/workflows/create-release.yaml
