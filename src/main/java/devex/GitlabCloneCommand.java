@@ -42,7 +42,8 @@ public class GitlabCloneCommand implements Runnable {
             order = 1,
             names = {"-c", "--clone-protocol"},
             description = "Chose the transport protocol used clone the project repositories. Valid values: ${COMPLETION-CANDIDATES}.",
-            defaultValue = "SSH"
+            defaultValue = "SSH",
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private GitCloneProtocol cloneProtocol;
 
@@ -50,18 +51,10 @@ public class GitlabCloneCommand implements Runnable {
             order = 2,
             names = {"-m", "--search-mode"},
             description = "Chose how the group is searched for. Groups can be searched by name or full path. Valid values: ${COMPLETION-CANDIDATES}.",
-            defaultValue = "NAME"
+            defaultValue = "NAME",
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private GitlabGroupSearchMode searchMode;
-
-    @CommandLine.Option(
-            order = 3,
-            names = {"-u", "--https-username"},
-            description = "The username to authenticate with when the HTTPS clone protocol is selected. This option is required when cloning private groups, in which case the GitLab token will be used as the password.",
-            arity = "0..1",
-            interactive = true
-    )
-    private String httpsUsername;
 
     @CommandLine.Parameters(
             index = "0",
@@ -75,7 +68,7 @@ public class GitlabCloneCommand implements Runnable {
             paramLabel = "PATH",
             description = "The local path where to create the group clone.",
             defaultValue = ".",
-            showDefaultValue = CommandLine.Help.Visibility.ON_DEMAND
+            showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private String localPath;
 
@@ -92,7 +85,6 @@ public class GitlabCloneCommand implements Runnable {
 
     private void configureGitService() {
         gitService.setCloneProtocol(cloneProtocol);
-        gitService.setHttpsUsername(httpsUsername);
     }
 
     private void cloneGroup() {

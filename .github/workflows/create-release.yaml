@@ -62,6 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       release_body_file: "body.txt"
+    outputs:
+      new_version: ${{ steps.release-files.outputs.new_version }}
+      all_files_sha: ${{ steps.release-files.outputs.all_files_sha }}
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@v2
@@ -87,6 +90,7 @@ jobs:
           for file in *; do sha256sum "${file}" > "${file}.sha256sum"; done
           tar czf all-files-${version}.tar.gz *
           sha256sum all-files-${version}.tar.gz > all-files-${version}.tar.gz.sha256sum
+          all_files_sha="$( cat all-files-${version}.tar.gz.sha256sum )"
           cd ..
 
           # Create release text
@@ -104,6 +108,8 @@ jobs:
           EOF
 
           echo "${change_log}" >> "${release_body_file}"
+          echo "::set-output name=new_version::${version}"
+          echo "::set-output name=all_files_sha::${all_files_sha}"
         env:
           tag_ref: ${{ github.ref }}
           change_log: ${{ steps.changelog.outputs.changelog }}
@@ -116,3 +122,34 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  brew_tap_update:
+    name: "Create brew tap update PR"
+    needs: create_release
+    runs-on: ubuntu-latest
+    env:
+      new_version: ${{needs.create_release.outputs.new_version}}
+      all_files_sha: ${{needs.create_release.outputs.all_files_sha}}
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+        with:
+          repository: 'miguelaferreira/homebrew-tools'
+      - name: "Update formula"
+        run: scripts/update-formula.sh "Formula/devex-cli.rb" "${{ env.new_version }}" "${{ env.all_files_sha }}"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "Update devex-cli formula to version ${{ env.new_version }}"
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          base: main
+          branch: update-devex-cli-formula
+          delete-branch: true
+          title: '[New tool release] DevEx cli update'
+          body: |
+            This PR
+            - Updates devex-cli formula to version ${{ env.new_version }}
+            - All files package sha is ${{ env.all_files_sha }
+            - Auto-generated from [devex-cli Continuous Delivery workflow][1]
+
+            [1]: https://github.com/miguelaferreira/devex-cli/actions/workflows/create-release.yaml
