@@ -90,7 +90,7 @@ jobs:
           for file in *; do sha256sum "${file}" > "${file}.sha256sum"; done
           tar czf all-files-${version}.tar.gz *
           sha256sum all-files-${version}.tar.gz > all-files-${version}.tar.gz.sha256sum
-          all_files_sha="$( cat all-files-${version}.tar.gz.sha256sum )"
+          all_files_sha="$( cat all-files-${version}.tar.gz.sha256sum | cut -f 1 -d ' ' )"
           cd ..
 
           # Create release text
