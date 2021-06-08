@@ -140,6 +140,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
+          token: ${{ secrets.BOT_GITHUB_PAT_PUBLIC_REPO }}
           commit-message: "Update devex-cli formula to version ${{ env.new_version }}"
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           base: main
