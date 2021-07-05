@@ -1,9 +1,10 @@
 #!/bin/bash
+
 set -euo pipefail
 IFS=$'\n\t'
 
 say() {
-  what="$@"
+  local what="$@"
   echo "==> ${what}"
 }
 

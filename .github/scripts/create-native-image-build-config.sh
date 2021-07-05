@@ -1,15 +1,16 @@
 #!/bin/bash
+
 set -euo pipefail
 IFS=$'\n\t'
 
 say() {
-  what="$@"
+  local what="$@"
   echo "==> ${what}"
 }
 
 cmd() {
-  config_output_dir="${1}"
-  args="${*:2}"
+  local config_output_dir="${1}"
+  local args="${*:2}"
   java -agentlib:native-image-agent=config-output-dir="${config_output_dir}" -jar build/libs/devex-*-all.jar gitlab clone ${args}
 }
 
