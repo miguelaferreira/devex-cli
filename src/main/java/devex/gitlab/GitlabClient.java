@@ -16,6 +16,7 @@ import java.util.Optional;
 @Retryable(excludes = HttpClientResponseException.class)
 @Client("${gitlab.url}/api/v4")
 @Header(name = GitlabClient.H_PRIVATE_TOKEN, value = "${gitlab.token:}")
+@Header(name = "User-Agent", value = "DevEx Cli App")
 public interface GitlabClient {
     String H_PRIVATE_TOKEN = "PRIVATE-TOKEN";
 

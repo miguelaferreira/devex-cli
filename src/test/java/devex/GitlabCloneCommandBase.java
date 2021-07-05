@@ -50,7 +50,7 @@ public class GitlabCloneCommandBase extends TestBase {
                           .contains(String.format("] INFO  devex.GitlabCloneCommand - Cloning group '%s'", groupName))
                           .contains(String.format("] DEBUG devex.gitlab.GitlabService - Looking for group named: %s", groupName))
                           .contains(String.format("] DEBUG devex.gitlab.GitlabService - Searching for projects in group '%s'", groupName))
-                          .contains("] TRACE devex.gitlab.GitlabService - Invoking paginated API")
+                          .contains("] TRACE devex.http.HttpClientUtils - Invoking paginated API")
                           .contains("] INFO  devex.GitlabCloneCommand - All done")
                           .contains("PRIVATE-TOKEN");
     }
