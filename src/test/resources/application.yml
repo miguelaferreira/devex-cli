@@ -5,3 +5,6 @@ micronaut:
 
 gitlab:
   url: "https://gitlab.com"
+
+github:
+  url: "https://api.github.com"
