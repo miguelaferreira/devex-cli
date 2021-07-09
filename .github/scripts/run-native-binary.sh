@@ -57,7 +57,6 @@ local_path="gitlab-ssh-by-full-path"
 say "Asking to clone group by full path"
 build/native-image/application gitlab clone -x -m full_path gitlab-clone-example/sub-group-2/sub-group-3 "${local_path}"
 [[ -f "${local_path}/gitlab-clone-example/sub-group-2/sub-group-3/another-project/README.md" ]]
-cd -
 
 ################################################
 # Github
@@ -65,14 +64,14 @@ cd -
 local_path="github-ssh-no-submodules"
 say "Asking to clone organization, via ssh, without submodules"
 build/native-image/application github clone -x devex-cli-example "${local_path}"
-[[ ! -f "${local_path}/devex-cli-example/a-private-repository/README.md" ]]
-[[ ! -f "${local_path}/devex-cli-example/a-public-repository/README.md" ]]
+[[ -f "${local_path}/devex-cli-example/a-private-repository/README.md" ]]
+[[ -f "${local_path}/devex-cli-example/a-public-repository/README.md" ]]
 
 local_path="github-https-with-submodules"
 say "Asking to clone organization, via https, with submodules"
 build/native-image/application github clone -x -r -c HTTPS devex-cli-example "${local_path}"
-[[ ! -f "${local_path}/devex-cli-example/a-private-repository/README.md" ]]
-[[ ! -f "${local_path}/devex-cli-example/a-public-repository/README.md" ]]
+[[ -f "${local_path}/devex-cli-example/a-private-repository/README.md" ]]
+[[ -f "${local_path}/devex-cli-example/a-public-repository/README.md" ]]
 cd "${local_path}/devex-cli-example/a-private-repository"
 [[ "$(git remote -v | head -n 1)" == *"https://"* ]]
 cd -

@@ -1,5 +1,9 @@
 [
 {
+  "name":"apple.security.AppleProvider",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"byte[]"
 },
 {
@@ -215,6 +219,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.jcraft.jsch.jce.SignatureRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.jcraft.jsch.jce.SignatureRSASHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -259,6 +267,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"devex.$GithubCloneCommandDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"devex.$GitlabCloneCommandDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -269,6 +281,17 @@
 },
 {
   "name":"devex.DevexCommand$AppVersionProvider",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.GithubCloneCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"devex.GithubCommand",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -289,8 +312,36 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"devex.git.GitService",
-  "fields":[{"name":"httpsPassword"}]
+  "name":"devex.github.$GithubClient$InterceptedDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubOrganization$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubRepository$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubServiceDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubTokenFilterDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.GithubOrganization",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allDeclaredConstructors":true
+},
+{
+  "name":"devex.github.GithubRepository",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allDeclaredConstructors":true
 },
 {
   "name":"devex.gitlab.$GitlabClient$InterceptedDefinitionClass",
@@ -391,6 +442,9 @@
 {
   "name":"io.micronaut.health.$HeartbeatTaskDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.micronaut.http.HttpMethod[]"
 },
 {
   "name":"io.micronaut.http.bind.$DefaultRequestBinderRegistryDefinitionClass",
@@ -1222,6 +1276,14 @@
   "allDeclaredMethods":true
 },
 {
+  "name":"java.lang.ProcessBuilder",
+  "methods":[{"name":"redirectError","parameterTypes":["java.lang.ProcessBuilder$Redirect"] }]
+},
+{
+  "name":"java.lang.ProcessBuilder$Redirect",
+  "fields":[{"name":"INHERIT"}]
+},
+{
   "name":"java.lang.RuntimePermission"
 },
 {
@@ -1500,10 +1562,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"sun.security.provider.JavaKeyStore$DualFormatJKS",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"sun.security.provider.JavaKeyStore$JKS",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1536,10 +1594,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"sun.security.provider.certpath.PKIXCertPathValidator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"sun.security.rsa.RSAKeyFactory$Legacy",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1548,15 +1602,11 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"sun.security.rsa.RSASignature$SHA1withRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"sun.security.rsa.RSASignature$SHA224withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.rsa.RSASignature$SHA256withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.rsa.RSASignature$SHA384withRSA",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
