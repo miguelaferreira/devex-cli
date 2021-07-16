@@ -2,11 +2,13 @@ package devex;
 
 
 import devex.git.GitCloneProtocol;
+import devex.git.GitRepository;
 import devex.git.GitService;
 import devex.gitlab.GitlabGroup;
 import devex.gitlab.GitlabGroupSearchMode;
 import devex.gitlab.GitlabProject;
 import devex.gitlab.GitlabService;
+import io.micronaut.context.annotation.Value;
 import io.reactivex.Flowable;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -24,8 +26,8 @@ import javax.inject.Inject;
         aliases = "cl",
         header = {
                 "Clone an entire GitLab group with all sub-groups and repositories.",
-                "While cloning initialize project git sub-modules (may require two runs due to ordering of projects).",
-                "When a project is already cloned, tries to initialize git sub-modules."
+                "While cloning initialize project git sub-modules if option@|bold,underline -r|@ is provided.",
+                "When a project is already cloned, tries to initialize git sub-modules if option@|bold,underline -r|@ is provided."
         }
 )
 public class GitlabCloneCommand implements Runnable {
@@ -76,6 +78,8 @@ public class GitlabCloneCommand implements Runnable {
     GitlabService gitlabService;
     @Inject
     GitService gitService;
+    @Value("${gitlab.token}")
+    String token;
 
     @Override
     public void run() {
@@ -85,6 +89,9 @@ public class GitlabCloneCommand implements Runnable {
 
     private void configureGitService() {
         gitService.setCloneProtocol(cloneProtocol);
+        if (cloneProtocol == GitCloneProtocol.HTTPS) {
+            gitService.setHttpsPassword(token);
+        }
     }
 
     private void cloneGroup() {
@@ -101,11 +108,11 @@ public class GitlabCloneCommand implements Runnable {
 
         final Flowable<Tuple2<GitlabProject, Either<Throwable, Git>>> clonedProjects =
                 gitlabService.getGitlabGroupProjects(group)
-                             .map(project -> Tuple.of(project, project))
+                             .map(project -> Tuple.of(project, buildGitRepository(project)))
                              .map(tuple -> tuple.map2(
-                                     project -> recurseSubmodules
-                                             ? gitService.cloneOrInitSubmodulesProject(project, localPath)
-                                             : gitService.cloneProject(project, localPath)
+                                     repository -> recurseSubmodules
+                                             ? gitService.cloneOrInitSubmodules(repository, localPath)
+                                             : gitService.clone(repository, localPath)
                                      )
                              );
 
@@ -121,5 +128,14 @@ public class GitlabCloneCommand implements Runnable {
                       });
 
         log.info("All done");
+    }
+
+    private GitRepository buildGitRepository(GitlabProject project) {
+        return GitRepository.builder()
+                            .name(project.getNameWithNamespace())
+                            .path(project.getPathWithNamespace())
+                            .cloneUrlSsh(project.getSshUrlToRepo())
+                            .cloneUrlHttps(project.getHttpUrlToRepo())
+                            .build();
     }
 }

@@ -1,7 +1,5 @@
 package devex.git;
 
-import devex.gitlab.GitlabProject;
-import io.micronaut.context.annotation.Value;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
@@ -26,76 +24,76 @@ public class GitService {
     public static final String HTTPS_USERNAME = "git";
 
     private GitCloneProtocol cloneProtocol = GitCloneProtocol.SSH;
-    @Value("${gitlab.token:}")
     private String httpsPassword = "";
 
     public void setCloneProtocol(GitCloneProtocol cloneProtocol) {
         this.cloneProtocol = cloneProtocol;
     }
 
-    protected void setHttpsPassword(String httpsPassword) {
+    public void setHttpsPassword(String httpsPassword) {
         this.httpsPassword = httpsPassword;
     }
 
-    public Either<Throwable, Git> cloneOrInitSubmodulesProject(GitlabProject project, String cloneDirectory) {
-        final String projectName = project.getNameWithNamespace();
-        log.trace("Cloning or initializing submodules for project '{}' under directory '{}'", projectName, cloneDirectory);
-        return tryCloneProject(project, cloneDirectory, projectName, true)
-                .recoverWith(t -> tryInitSubmodules(project, cloneDirectory))
+    public Either<Throwable, Git> cloneOrInitSubmodules(GitRepository repository, String cloneDirectory) {
+        final String repositoryName = repository.getName();
+        log.trace("Cloning or initializing submodules for repository '{}' under directory '{}'", repositoryName, cloneDirectory);
+        return tryClone(repository, cloneDirectory, true)
+                .recoverWith(t -> tryInitSubmodules(repository, cloneDirectory))
                 .toEither();
     }
 
-    public Either<Throwable, Git> cloneProject(final GitlabProject project, final String cloneDirectory) {
-        final String projectName = project.getNameWithNamespace();
-        log.trace("Cloning project '{}' under directory '{}'", projectName, cloneDirectory);
-        return tryCloneProject(project, cloneDirectory, projectName, false)
+    public Either<Throwable, Git> clone(final GitRepository repository, final String cloneDirectory) {
+        final String repositoryName = repository.getName();
+        log.trace("Cloning repository '{}' under directory '{}'", repositoryName, cloneDirectory);
+        return tryClone(repository, cloneDirectory, false)
                 .toEither();
     }
 
-    private Try<Git> tryCloneProject(final GitlabProject project, final String cloneDirectory, final String projectName, final boolean cloneSubmodules) {
-        return Try.of(() -> cloneProject(project, cloneDirectory, cloneSubmodules))
-                  .onSuccess(gitRepo -> log.trace("Cloned project '{}' to '{}'", projectName, getDirectory(gitRepo)))
-                  .onFailure(t -> logFailedClone(projectName, t));
+    private Try<Git> tryClone(final GitRepository repository, final String cloneDirectory, final boolean cloneSubmodules) {
+        String repositoryName = repository.getName();
+        return Try.of(() -> clone(repository, cloneDirectory, cloneSubmodules))
+                  .onSuccess(gitRepo -> log.trace("Cloned repository '{}' to '{}'", repositoryName, getDirectory(gitRepo)))
+                  .onFailure(t -> logFailedClone(repositoryName, t));
     }
 
-    private Try<Git> tryInitSubmodules(GitlabProject project, String cloneDirectory) {
-        return Try.of(() -> initSubmodules(project, cloneDirectory))
+    private Try<Git> tryInitSubmodules(GitRepository repository, String cloneDirectory) {
+        return Try.of(() -> initSubmodules(repository, cloneDirectory))
                   .onSuccess(gitRepo -> log.trace("Initialized submodules of git repository at '{}'", getDirectory(gitRepo)))
-                  .onFailure(t2 -> logFailedSubmoduleInit(project.getName(), t2));
+                  .onFailure(t2 -> logFailedSubmoduleInit(repository.getName(), t2));
     }
 
-    protected Git openRepository(GitlabProject project, String cloneDirectory) throws IOException {
-        String pathToRepo = cloneDirectory + FileSystems.getDefault().getSeparator() + project.getPathWithNamespace();
+    protected Git openRepository(GitRepository repository, String cloneDirectory) throws IOException {
+        String pathToRepo = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
         return Git.open(new File(pathToRepo));
     }
 
-    private void logFailedClone(String projectName, Throwable throwable) {
-        log.debug(String.format("Could not clone project '%s' because: %s", projectName, throwable.getMessage()), throwable);
+    private void logFailedClone(String repositoryName, Throwable throwable) {
+        log.debug(String.format("Could not clone repository '%s' because: %s", repositoryName, throwable.getMessage()), throwable);
     }
 
     private String getDirectory(Git gitRepo) {
         return gitRepo.getRepository().getDirectory().toString();
     }
 
-    protected Git cloneProject(GitlabProject project, String cloneDirectory, boolean cloneSubmodules) throws GitAPIException {
-        String pathToClone = cloneDirectory + FileSystems.getDefault().getSeparator() + project.getPathWithNamespace();
+    protected Git clone(GitRepository repository, String cloneDirectory, boolean cloneSubmodules) throws GitAPIException {
+        String pathToClone = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
 
         final CloneCommand cloneCommand = Git.cloneRepository();
         switch (cloneProtocol) {
             case SSH:
-                cloneCommand.setURI(project.getSshUrlToRepo());
+                cloneCommand.setURI(repository.getCloneUrlSsh());
                 cloneCommand.setTransportConfigCallback(transport -> {
                     SshTransport sshTransport = (SshTransport) transport;
                     sshTransport.setSshSessionFactory(sshSessionFactory);
                 });
                 break;
             case HTTPS:
-                cloneCommand.setURI(project.getHttpUrlToRepo());
+                cloneCommand.setURI(repository.getCloneUrlHttps());
                 final String password = Objects.requireNonNullElse(httpsPassword, "");
                 if (!password.isBlank()) {
                     cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(HTTPS_USERNAME, httpsPassword));
                 } else {
-                    log.debug("Credentials for HTTPS remote not set, group to clone must be public.");
+                    log.debug("Credentials for HTTPS remote not set, repository to clone must be public.");
                 }
                 break;
         }
@@ -107,14 +105,15 @@ public class GitService {
         return cloneCommand.call();
     }
 
-    protected Git initSubmodules(GitlabProject project, String cloneDirectory) throws IOException, GitAPIException {
-        final Git repo = openRepository(project, cloneDirectory);
+    protected Git initSubmodules(GitRepository repository, String cloneDirectory) throws IOException, GitAPIException {
+        final Git repo = openRepository(repository, cloneDirectory);
         repo.submoduleInit().call();
         repo.submoduleUpdate().call();
         return repo;
     }
 
-    private void logFailedSubmoduleInit(String projectName, Throwable throwable) {
-        log.debug(String.format("Could not initialize submodules for project '%s' because: %s", projectName, throwable.getMessage()), throwable);
+    private void logFailedSubmoduleInit(String repositoryName, Throwable throwable) {
+        log.debug(String.format("Could not initialize submodules for repository '%s' because: %s", repositoryName, throwable
+                .getMessage()), throwable);
     }
 }

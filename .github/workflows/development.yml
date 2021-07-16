@@ -44,6 +44,7 @@ jobs:
         run: ./gradlew build
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
       - name: "Publish Unit Test Results"
         uses: EnricoMi/publish-unit-test-result-action/composite@v1
         if: always()
@@ -55,14 +56,17 @@ jobs:
           .github/scripts/merge-native-image-build-config.sh linux
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
       - name: "Gradle nativeImage"
         run: ./gradlew nativeImage
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
       - name: "Run and test native binary"
         run: .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
       - uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
         with:
           add: "src/main/resources/META-INF/native-image"

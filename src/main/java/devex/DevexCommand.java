@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
         versionProvider = DevexCommand.AppVersionProvider.class,
         sortOptions = false,
         usageHelpAutoWidth = true,
-        subcommands = {GitlabCommand.class},
+        subcommands = {GitlabCommand.class, GithubCommand.class},
         scope = CommandLine.ScopeType.INHERIT
 )
 public class DevexCommand {

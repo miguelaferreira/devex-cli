@@ -64,6 +64,7 @@ java {
 
 test {
     environment "GITLAB_TOKEN", System.getenv('GITLAB_TOKEN')
+    environment "GITHUB_TOKEN", System.getenv('GITHUB_TOKEN')
     moduleOptions {
         runOnClasspath = true
     }

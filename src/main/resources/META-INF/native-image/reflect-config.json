@@ -215,6 +215,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.jcraft.jsch.jce.SignatureRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.jcraft.jsch.jce.SignatureRSASHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -259,6 +263,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"devex.$GithubCloneCommandDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"devex.$GitlabCloneCommandDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -269,6 +277,17 @@
 },
 {
   "name":"devex.DevexCommand$AppVersionProvider",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.GithubCloneCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"devex.GithubCommand",
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -289,8 +308,36 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"devex.git.GitService",
-  "fields":[{"name":"httpsPassword"}]
+  "name":"devex.github.$GithubClient$InterceptedDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubOrganization$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubRepository$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubServiceDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.$GithubTokenFilterDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.github.GithubOrganization",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allDeclaredConstructors":true
+},
+{
+  "name":"devex.github.GithubRepository",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allDeclaredConstructors":true
 },
 {
   "name":"devex.gitlab.$GitlabClient$InterceptedDefinitionClass",
@@ -391,6 +438,9 @@
 {
   "name":"io.micronaut.health.$HeartbeatTaskDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.micronaut.http.HttpMethod[]"
 },
 {
   "name":"io.micronaut.http.bind.$DefaultRequestBinderRegistryDefinitionClass",
@@ -1545,6 +1595,10 @@
 },
 {
   "name":"sun.security.rsa.RSAPSSSignature",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSASignature$SHA1withRSA",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {

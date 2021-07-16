@@ -1,9 +1,10 @@
 #!/bin/bash
+
 set -euo pipefail
 IFS=$'\n\t'
 
 say() {
-  what="$@"
+  local what="$@"
   echo "==> ${what}"
 }
 
@@ -16,7 +17,6 @@ rm -rf "${output_dir}"
 mkdir -p "${output_dir}"
 
 [[ -d "${native_image_config_dir}" ]] || exit 1
-
 
 say "Merging native-image build config"
 input_dirs=""
