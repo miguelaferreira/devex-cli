@@ -68,7 +68,7 @@ public class GithubCloneCommand implements Runnable {
     GithubService githubService;
     @Inject
     GitService gitService;
-    @Value("${github.token}")
+    @Value("${github.token:}")
     String token;
 
     @Override

@@ -78,7 +78,7 @@ public class GitlabCloneCommand implements Runnable {
     GitlabService gitlabService;
     @Inject
     GitService gitService;
-    @Value("${gitlab.token}")
+    @Value("${gitlab.token:}")
     String token;
 
     @Override
