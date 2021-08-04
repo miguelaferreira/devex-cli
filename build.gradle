@@ -9,6 +9,7 @@ group = "devex"
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 micronaut {
@@ -42,7 +43,10 @@ dependencies {
         exclude module: 'jsch'
     }
 
-    implementation 'com.github.mwiede:jsch:0.1.62'
+// original dependency was a multi-version jar and the classes for Java15 were no loading
+//    implementation 'com.github.mwiede:jsch:0.1.62'
+    implementation 'com.github.miguelaferreira:jsch:replace-tag-jsch-0.1.63-SNAPSHOT'
+
 
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'

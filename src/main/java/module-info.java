@@ -15,7 +15,6 @@ module devex {
     requires org.eclipse.jgit;
     // merged with org.eclipse.jgit to prevent split package
     // requires org.eclipse.jgit.ssh.jsch;
-    requires jsch;
     requires io.micronaut.core;
     requires org.reactivestreams;
     requires io.micronaut.picocli.picocli;
