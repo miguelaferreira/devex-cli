@@ -15,8 +15,10 @@ import java.util.Objects;
 
 @Slf4j
 public class OverrideJschConfigSessionFactory extends JschConfigSessionFactory {
+
     static {
         JSch.setConfig("signature.rsa", JSch.getConfig("ssh-rsa"));
+        JSch.setLogger(new JSCHLogger());
     }
 
     @Override

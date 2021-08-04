@@ -26,6 +26,7 @@ public class LoggingConfiguration {
             "org.eclipse.jgit.api",
             "org.eclipse.jgit.errors",
             "org.eclipse.jgit.transport",
+            "com.jcraft.jsch",
     };
 
     public static void configureLoggers(LoggingSystem loggingSystem, LogLevel level, boolean fullLogs) throws JoranException {
