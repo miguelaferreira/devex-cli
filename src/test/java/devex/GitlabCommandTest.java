@@ -20,7 +20,9 @@ public class GitlabCommandTest {
             String[] args = new String[]{"gitlab", "-V"};
             DevexCommand.execute(ctx, args);
 
-            assertThat(baos.toString()).startsWith(new DevexCommand.AppVersionProvider().getVersionText());
+            assertThat(baos.toString()).contains("java: 16")
+                                       .contains("devex cli: ")
+                                       .contains(new DevexCommand.AppVersionProvider().getVersionText());
         }
     }
 

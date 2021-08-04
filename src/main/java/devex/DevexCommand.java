@@ -141,7 +141,7 @@ public class DevexCommand {
             if (in != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 String version = reader.lines().collect(Collectors.joining());
-                return new String[]{"v" + version};
+                return new String[]{"java: " + System.getProperty("java.version") + "\ndevex cli: v" + version};
             } else {
                 return new String[]{"No version"};
             }
