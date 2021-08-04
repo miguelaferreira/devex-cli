@@ -29,7 +29,7 @@ cmd_github() {
 test_clones_dir="test-clones"
 native_image_config_dir="native-image-config"
 
-rm -rf "${native_image_config_dir}"
+rm -rf "${native_image_config_dir}" "${test_clones_dir}"
 mkdir "${native_image_config_dir}"
 
 say "Asking for tool version"
