@@ -48,6 +48,13 @@ jobs:
           # Prefix the list here with "+" to use these queries and those in the config file.
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
+      - name: "Install GraalVM"
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: '21.2.0'
+          java: 'java16'
+          arch: 'amd64'
+
       - name: Autobuild
         uses: github/codeql-action/autobuild@v1
 
