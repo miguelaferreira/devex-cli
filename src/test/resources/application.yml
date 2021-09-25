@@ -8,3 +8,8 @@ gitlab:
 
 github:
   url: "https://api.github.com"
+
+terraform:
+  command: "terraform"
+  secrets:
+    - random_string

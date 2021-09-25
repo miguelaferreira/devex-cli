@@ -1,5 +1,11 @@
 package devex;
 
+import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
 import ch.qos.logback.core.joran.spi.JoranException;
 import io.micronaut.configuration.picocli.MicronautFactory;
 import io.micronaut.context.ApplicationContext;
@@ -10,12 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Command(
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
         versionProvider = DevexCommand.AppVersionProvider.class,
         sortOptions = false,
         usageHelpAutoWidth = true,
-        subcommands = {GitlabCommand.class, GithubCommand.class},
+        subcommands = {GitlabCommand.class, GithubCommand.class, TerraformCommand.class},
         scope = CommandLine.ScopeType.INHERIT
 )
 public class DevexCommand {
@@ -72,7 +72,8 @@ public class DevexCommand {
     @Option(
             order = 13,
             names = {"--trace"},
-            description = "Sets all loggers to TRACE level. WARNING: this setting will leak tokens used for HTTP authentication (eg. the GitLab token) to the logs, use with caution.",
+            description = "Sets all loggers to TRACE level. WARNING: this setting will leak tokens used for HTTP authentication (eg. the GitLab token) to the logs, use with " +
+                    "caution.",
             scope = CommandLine.ScopeType.INHERIT
     )
     private boolean trace;

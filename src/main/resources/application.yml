@@ -13,3 +13,9 @@ gitlab:
 
 github:
   url: "https://api.github.com"
+
+terraform:
+  command: "terraform"
+  secrets:
+    - aws_iam_access_key
+    - tls_private_key

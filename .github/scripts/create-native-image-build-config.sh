@@ -17,13 +17,19 @@ cmd() {
 cmd_gitlab() {
   local config_output_dir="${1}"
   local args="${*:2}"
-  GITHUB_TOKEN="" cmd ${config_output_dir} gitlab clone ${args}
+  GITHUB_TOKEN="" cmd "${config_output_dir}" gitlab clone ${args}
 }
 
 cmd_github() {
   local config_output_dir="${1}"
   local args="${*:2}"
-  GITLAB_TOKEN="" cmd ${config_output_dir} github clone ${args}
+  GITLAB_TOKEN="" cmd "${config_output_dir}" github clone ${args}
+}
+
+cmd_terraform() {
+  local config_output_dir="${1}"
+  local args="${*:2}"
+  GITLAB_TOKEN="" GITHUB_TOKEN="" TERRAFORM_SECRETS="random_string" cmd "${config_output_dir}" terraform taint-secrets ${args}
 }
 
 test_clones_dir="test-clones"
@@ -98,3 +104,22 @@ GITHUB_TOKEN="" cmd_github "${native_image_config_dir}/${local_path}" --debug -c
 local_path="${test_clones_dir}/github-org-with-token-https-with-submodules-debug"
 say "[GITLAB] Asking to clone an organization using a token, via https, with submodules"
 cmd_github "${native_image_config_dir}/${local_path}" --debug -c HTTPS -r devex-cli-example "${local_path}"
+
+################################################
+# Terraform
+################################################
+terraform_module_dir="src/test/resources/terraform/module1"
+cd "${terraform_module_dir}"
+terraform init -input=false
+terraform apply -auto-approve
+cd -
+
+say "[TERRAFORM] Asking to taint secrets"
+cmd_terraform "${native_image_config_dir}/test-terraform/taint" "${terraform_module_dir}"
+
+say "[TERRAFORM] Asking to untaint secrets"
+cmd_terraform "${native_image_config_dir}/test-terraform/untaint" -u "${terraform_module_dir}"
+
+cd "${terraform_module_dir}"
+terraform destroy -auto-approve
+cd -

@@ -1,5 +1,6 @@
 package devex;
 
+import javax.inject.Inject;
 
 import devex.git.GitCloneProtocol;
 import devex.git.GitRepository;
@@ -18,16 +19,14 @@ import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import javax.inject.Inject;
-
 @Slf4j
 @Command(
         name = "clone",
         aliases = "cl",
         header = {
                 "Clone an entire GitLab group with all sub-groups and repositories.",
-                "While cloning initialize project git sub-modules if option@|bold,underline -r|@ is provided.",
-                "When a project is already cloned, tries to initialize git sub-modules if option@|bold,underline -r|@ is provided."
+                "While cloning initialize project git sub-modules if option @|bold,underline -r|@ is provided.",
+                "When a project is already cloned, tries to initialize git sub-modules if option @|bold,underline -r|@ is provided."
         }
 )
 public class GitlabCloneCommand implements Runnable {
@@ -110,9 +109,9 @@ public class GitlabCloneCommand implements Runnable {
                 gitlabService.getGitlabGroupProjects(group)
                              .map(project -> Tuple.of(project, buildGitRepository(project)))
                              .map(tuple -> tuple.map2(
-                                     repository -> recurseSubmodules
-                                             ? gitService.cloneOrInitSubmodules(repository, localPath)
-                                             : gitService.clone(repository, localPath)
+                                             repository -> recurseSubmodules
+                                                     ? gitService.cloneOrInitSubmodules(repository, localPath)
+                                                     : gitService.clone(repository, localPath)
                                      )
                              );
 
