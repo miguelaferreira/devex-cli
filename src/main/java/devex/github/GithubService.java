@@ -5,13 +5,13 @@ import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.reactivex.Flowable;
 import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Singleton;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -40,7 +40,7 @@ public class GithubService {
         }
     }
 
-    public Flowable<GithubRepository> getOrganizationRepositories(String organization) {
+    public Flux<GithubRepository> getOrganizationRepositories(String organization) {
         log.debug("Getting repositories of organization {}", organization);
         return HttpClientUtils.paginatedApiCall(pageIndex -> client.getOrganizationRepositories(organization, pageIndex), this::extractNextPageFromLinkHeader);
     }

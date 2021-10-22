@@ -1,16 +1,16 @@
 package devex.terraform;
 
 import io.micronaut.context.annotation.Value;
-import io.reactivex.Flowable;
-import io.reactivex.internal.functions.Functions;
 import io.vavr.collection.List;
 import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Singleton;
 import java.util.Arrays;
+import java.util.function.Function;
 
 @Slf4j
 @Singleton
@@ -28,7 +28,7 @@ public class TerraformStateService {
         return createTemporaryStateFile(command.execute(directory, new String[]{"state", "pull"}));
     }
 
-    public Flowable<Either<String, TerraformStateFile>> pullStateFileAsync(TerraformModuleDirectory directory) {
+    public Flux<Either<String, TerraformStateFile>> pullStateFileAsync(TerraformModuleDirectory directory) {
         return command.executeAsync(directory, new String[]{"state", "pull"})
                       .map(this::createTemporaryStateFile);
     }
@@ -48,7 +48,7 @@ public class TerraformStateService {
         return filterSecrets(maybeStateList);
     }
 
-    public Flowable<Either<String, Stream<String>>> listSecretsAsync(TerraformModuleDirectory directory) {
+    public Flux<Either<String, Stream<String>>> listSecretsAsync(TerraformModuleDirectory directory) {
         return command.executeAsync(directory, new String[]{"state", "list"})
                       .map(this::filterSecrets);
     }
@@ -77,11 +77,11 @@ public class TerraformStateService {
         return taintResources(directory, this.listSecrets(directory), untaint);
     }
 
-    public Flowable<Either<String, Flowable<Either<String, String>>>> taintSecretsAsync(TerraformModuleDirectory directory) {
+    public Flux<Either<String, Flux<Either<String, String>>>> taintSecretsAsync(TerraformModuleDirectory directory) {
         return taintSecretsAsync(directory, false);
     }
 
-    public Flowable<Either<String, Flowable<Either<String, String>>>> taintSecretsAsync(TerraformModuleDirectory directory, final boolean untaint) {
+    public Flux<Either<String, Flux<Either<String, String>>>> taintSecretsAsync(TerraformModuleDirectory directory, final boolean untaint) {
         return this.listSecretsAsync(directory)
                    .map(maybeList -> taintResourcesAsync(directory, maybeList, untaint));
     }
@@ -91,11 +91,11 @@ public class TerraformStateService {
         return maybeList.map(resourcesWithSecrets -> resourcesWithSecrets.map(resource -> command.execute(directory, taintCommand(resource, untaint))));
     }
 
-    private Either<String, Flowable<Either<String, String>>> taintResourcesAsync(final TerraformModuleDirectory directory, final Either<String, Stream<String>> maybeList,
-                                                                                 final boolean untaint) {
+    private Either<String, Flux<Either<String, String>>> taintResourcesAsync(final TerraformModuleDirectory directory, final Either<String, Stream<String>> maybeList,
+                                                                             final boolean untaint) {
         return maybeList.map(resourcesWithSecrets ->
-                Flowable.fromIterable(resourcesWithSecrets.map(resource -> command.executeAsync(directory, taintCommand(resource, untaint))))
-                        .flatMap(Functions.identity())
+                Flux.fromIterable(resourcesWithSecrets.map(resource -> command.executeAsync(directory, taintCommand(resource, untaint))))
+                    .flatMap(Function.identity())
         );
     }
 

@@ -4,10 +4,10 @@ import devex.TestBase;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +26,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void searchGroups_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PRIVATE_GROUP_NAME, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PRIVATE_GROUP_NAME, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(2)
@@ -48,11 +48,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void searchGroups_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PUBLIC_GROUP_NAME, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PUBLIC_GROUP_NAME, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(6)
@@ -61,11 +61,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupSubGroups_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupSubGroups(PRIVATE_GROUP_NAME, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupSubGroups(PRIVATE_GROUP_NAME, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
@@ -74,11 +74,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupSubGroups_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupSubGroups(PUBLIC_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupSubGroups(PUBLIC_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(2)
@@ -87,11 +87,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupDescendants_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PRIVATE_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PRIVATE_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
@@ -100,11 +100,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupDescendants_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PUBLIC_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PUBLIC_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabGroup>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabGroup>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(3)
@@ -113,11 +113,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupProjects_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PUBLIC_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PUBLIC_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabProject>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabProject>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabProject>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabProject>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
@@ -126,11 +126,11 @@ class GitlabClientWithTokenTest extends TestBase {
 
     @Test
     void groupProjects_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PRIVATE_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PRIVATE_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabProject>>> iterable = groups.blockingIterable();
-        assertThat(iterable).hasSize(1);
-        final HttpResponse<List<GitlabProject>> response = iterable.iterator().next();
+        final List<HttpResponse<List<GitlabProject>>> List = groups.collectList().block();
+        assertThat(List).hasSize(1);
+        final HttpResponse<List<GitlabProject>> response = List.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
