@@ -10,8 +10,8 @@ module devex {
     requires io.micronaut.inject;
     requires io.micronaut.http;
     requires io.micronaut.http_client_core;
-    requires io.reactivex.rxjava2;
-    requires javax.inject;
+    requires reactor.core;
+    requires jakarta.inject;
     requires info.picocli;
     requires org.eclipse.jgit;
     // merged with org.eclipse.jgit to prevent split package

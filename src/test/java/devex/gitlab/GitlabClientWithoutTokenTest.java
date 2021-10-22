@@ -7,10 +7,10 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientException;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +32,9 @@ class GitlabClientWithoutTokenTest extends TestBase {
 
     @Test
     void searchGroups_privateGroup_withoutToken() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PRIVATE_GROUP_NAME, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PRIVATE_GROUP_NAME, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
+        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.collectList().block();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
@@ -51,9 +51,9 @@ class GitlabClientWithoutTokenTest extends TestBase {
 
     @Test
     void searchGroups_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PUBLIC_GROUP_NAME, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PUBLIC_GROUP_NAME, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
+        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.collectList().block();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
@@ -73,18 +73,18 @@ class GitlabClientWithoutTokenTest extends TestBase {
 
     @Test
     void groupDescendants_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PRIVATE_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PRIVATE_GROUP_ID, true, 10, 1);
 
-        final HttpClientResponseException e = assertThrows(HttpClientResponseException.class, groups::blockingFirst);
+        final HttpClientResponseException e = assertThrows(HttpClientResponseException.class, groups::blockFirst);
 
         assertThat(e).hasMessage("404 Group Not Found");
     }
 
     @Test
     void groupDescendants_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PUBLIC_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.groupDescendants(PUBLIC_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.blockingIterable();
+        final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.collectList().block();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
@@ -95,9 +95,9 @@ class GitlabClientWithoutTokenTest extends TestBase {
 
     @Test
     void groupProjects_publicGroup() {
-        final Flowable<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PUBLIC_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PUBLIC_GROUP_ID, true, 10, 1);
 
-        final Iterable<HttpResponse<List<GitlabProject>>> iterable = groups.blockingIterable();
+        final Iterable<HttpResponse<List<GitlabProject>>> iterable = groups.collectList().block();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabProject>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
@@ -108,9 +108,9 @@ class GitlabClientWithoutTokenTest extends TestBase {
 
     @Test
     void groupProjects_privateGroup() {
-        final Flowable<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PRIVATE_GROUP_ID, true, 10, 1);
+        final Flux<HttpResponse<List<GitlabProject>>> groups = client.groupProjects(PRIVATE_GROUP_ID, true, 10, 1);
 
-        final HttpClientException e = assertThrows(HttpClientException.class, groups::blockingFirst);
+        final HttpClientException e = assertThrows(HttpClientException.class, groups::blockFirst);
 
         assertThat(e).hasMessage("404 Group Not Found");
     }

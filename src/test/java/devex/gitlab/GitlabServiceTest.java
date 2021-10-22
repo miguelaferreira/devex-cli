@@ -2,13 +2,12 @@ package devex.gitlab;
 
 import devex.TestBase;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
 import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
-
-import jakarta.inject.Inject;
+import reactor.core.publisher.Flux;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,23 +47,23 @@ class GitlabServiceTest extends TestBase {
 
     @Test
     void getDescendantGroups() {
-        final Flowable<GitlabGroup> descendantGroups = service.getDescendantGroups(GITLAB_GROUP_ID);
+        final Flux<GitlabGroup> descendantGroups = service.getDescendantGroups(GITLAB_GROUP_ID);
 
-        assertThat(descendantGroups.blockingIterable()).hasSize(3);
+        assertThat(descendantGroups.collectList().block()).hasSize(3);
     }
 
     @Test
     void getSubGroupsRecursively() {
-        final Flowable<GitlabGroup> descendantGroups = service.getSubGroupsRecursively(GITLAB_GROUP_ID);
+        final Flux<GitlabGroup> descendantGroups = service.getSubGroupsRecursively(GITLAB_GROUP_ID);
 
-        assertThat(descendantGroups.blockingIterable()).hasSize(3);
+        assertThat(descendantGroups.collectList().block()).hasSize(3);
     }
 
     @Test
     void getGitlabGroupProjects() {
         final GitlabGroup group = service.findGroupBy(GITLAB_GROUP_NAME, GitlabGroupSearchMode.NAME).get();
-        final Flowable<GitlabProject> projects = service.getGitlabGroupProjects(group);
+        final Flux<GitlabProject> projects = service.getGitlabGroupProjects(group);
 
-        assertThat(projects.blockingIterable()).hasSize(3);
+        assertThat(projects.collectList().block()).hasSize(3);
     }
 }

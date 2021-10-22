@@ -1,15 +1,15 @@
 package devex;
 
-import javax.inject.Inject;
-import java.nio.file.Path;
-
 import devex.terraform.TerraformModuleDirectory;
 import devex.terraform.TerraformStateService;
-import io.reactivex.Flowable;
 import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import reactor.core.publisher.Flux;
+
+import java.nio.file.Path;
 
 @Slf4j
 @Command(
@@ -49,14 +49,14 @@ public class TerraformTaintSecretsCommand implements Runnable {
     public void run() {
         final String operationName = operationName();
         log.info("{}ing terraform resources in module '{}'", operationName, terraformModule);
-        final Flowable<Either<String, Flowable<Either<String, String>>>> execution =
+        final Flux<Either<String, Flux<Either<String, String>>>> execution =
                 terraformStateService.taintSecretsAsync(new TerraformModuleDirectory(Path.of(terraformModule)), untaint);
-        final Either<String, Flowable<Either<String, String>>> maybeTaintedResources = execution.blockingFirst();
+        final Either<String, Flux<Either<String, String>>> maybeTaintedResources = execution.blockFirst();
         if (maybeTaintedResources.isLeft()) {
             log.error("{} operation failed: {}", operationName, maybeTaintedResources.getLeft());
         } else {
-            final Flowable<Either<String, String>> taintedResources = maybeTaintedResources.get();
-            taintedResources.blockingIterable()
+            final Flux<Either<String, String>> taintedResources = maybeTaintedResources.get();
+            taintedResources.collectList().block()
                             .forEach(maybeTaintedResource -> {
                                 if (maybeTaintedResource.isLeft()) {
                                     log.warn("{} failed: {}", operationName, maybeTaintedResource.getLeft().trim());

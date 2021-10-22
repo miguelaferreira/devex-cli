@@ -2,6 +2,7 @@ package devex.git;
 
 import io.vavr.control.Either;
 import io.vavr.control.Try;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -10,7 +11,6 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
-import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;

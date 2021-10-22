@@ -3,10 +3,10 @@ package devex.github;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +28,9 @@ class GithubClientWithTokenTest {
 
     @Test
     void getOrganizationRepositories() {
-        final Flowable<HttpResponse<List<GithubRepository>>> repositories = client.getOrganizationRepositories("devex-cli-example", 1);
+        final Flux<HttpResponse<List<GithubRepository>>> repositories = client.getOrganizationRepositories("devex-cli-example", 1);
 
-        final Iterable<HttpResponse<List<GithubRepository>>> iterable = repositories.blockingIterable();
+        final Iterable<HttpResponse<List<GithubRepository>>> iterable = repositories.collectList().block();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GithubRepository>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
