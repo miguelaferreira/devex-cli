@@ -3,14 +3,20 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%rEx{full,
+                io.netty.channel.AbstractChannelHandlerContext,
+                io.micronaut.http.netty.stream.HttpStreamsClientHandler,
+                io.micronaut.http.netty.stream.HttpStreamsHandler,
+                org.junit.jupiter.api,
+                org.junit.platform.engine}
+            </pattern>
         </encoder>
     </appender>
 
     <root level="warn">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="devex" level="TRACE" />
-    <logger name="io.micronaut.http.client" level="TRACE" />
+    <logger name="devex" level="TRACE"/>
+    <logger name="io.micronaut.http.client" level="TRACE"/>
 </configuration>
