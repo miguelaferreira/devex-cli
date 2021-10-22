@@ -29,14 +29,16 @@ class TerraformStateServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        final Either<String, String> maybeOutput = terraformStateServiceTest.terraformApply(DIRECTORY);
-        log.info("Terraform apply output:\n" + maybeOutput.get());
+        final Either<String, String> maybeInitOutput = terraformStateServiceTest.terraformInit(DIRECTORY);
+        log.debug("==> Terraform Init output:\n" + maybeInitOutput.get());
+        final Either<String, String> maybeApplyOutput = terraformStateServiceTest.terraformApply(DIRECTORY);
+        log.debug("==> Terraform apply output:\n" + maybeApplyOutput.get());
     }
 
     @AfterAll
     static void afterAll() {
         final Either<String, String> maybeOutput = terraformStateServiceTest.terraformDestroy(DIRECTORY);
-        log.info("Terraform destroy output:\n" + maybeOutput.get());
+        log.debug("==> Terraform destroy output:\n" + maybeOutput.get());
     }
 
     @Test

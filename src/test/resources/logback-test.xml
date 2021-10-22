@@ -7,8 +7,12 @@
                 io.netty.channel.AbstractChannelHandlerContext,
                 io.micronaut.http.netty.stream.HttpStreamsClientHandler,
                 io.micronaut.http.netty.stream.HttpStreamsHandler,
-                org.junit.jupiter.api,
-                org.junit.platform.engine}
+                org.junit.jupiter,
+                org.junit.platform.engine,
+                org.junit.platform.launcher,
+                org.gradle.internal,
+                org.gradle.api.internal,
+                java.base}
             </pattern>
         </encoder>
     </appender>

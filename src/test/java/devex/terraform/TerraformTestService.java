@@ -6,6 +6,10 @@ public class TerraformTestService {
 
     private final TerraformCommand command = new TerraformCommand("terraform");
 
+    public Either<String, String> terraformInit(TerraformModuleDirectory directory) {
+        return command.execute(directory, new String[]{"init", "-input=false"});
+    }
+
     public Either<String, String> terraformApply(TerraformModuleDirectory directory) {
         return command.execute(directory, new String[]{"apply", "-auto-approve"});
     }

@@ -56,7 +56,7 @@ jobs:
           bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
           bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
       - name: "Gradle build"
-        run: ./gradlew build --info --stacktrace
+        run: ./gradlew build
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}

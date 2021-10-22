@@ -71,9 +71,21 @@ java {
 test {
     environment "GITLAB_TOKEN", System.getenv('GITLAB_TOKEN')
     environment "GITHUB_TOKEN", System.getenv('GITHUB_TOKEN')
+
     moduleOptions {
         runOnClasspath = true
     }
+
+//    // To trouble shoot failed tests in CI workflows:
+//    // - uncomment the block bellow
+//    // - set '--info' in the gradle build step of the workflow
+//    testLogging {
+//        // set options for log level LIFECYCLE
+//        events "failed"
+//        exceptionFormat "short"
+//
+//        info.showStandardStreams = true
+//    }
 }
 
 processResources {
