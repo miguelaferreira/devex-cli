@@ -2,6 +2,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.micronaut.application") version "2.0.3"
     id("org.javamodularity.moduleplugin") version "1.8.10"
+    id("org.openrewrite.rewrite") version("5.13.1")
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -70,6 +71,11 @@ dependencies {
     testImplementation 'org.assertj:assertj-vavr:0.4.1'
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine") // make gradle compileTestJava work
+
+}
+
+rewrite {
+    // enable recipes for specific migrations
 }
 
 application {
