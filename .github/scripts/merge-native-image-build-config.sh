@@ -25,3 +25,6 @@ for config_dir in "${native_image_config_dir}"/*/*; do
 done
 
 eval "graalvm/bin/native-image-configure-${os}" generate "${input_dirs}" --output-dir="${output_dir}"
+
+# remove reflection config for JavaxProviderBeanDefinition
+sed -i '/\n.*\n/!N;/\n.*JavaxProviderBeanDefinition/{$d;N;d};P;D' src/main/resources/META-INF/native-image/reflect-config.json
