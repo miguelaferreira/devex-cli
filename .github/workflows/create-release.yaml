@@ -30,10 +30,10 @@ jobs:
           arch: 'amd64'
       - name: "[${{ runner.os }}] Install native-image"
         run: gu install native-image
-      - name: Install Terraform
-        uses: little-core-labs/install-terraform@v2.0.0
+      - name: "[${{ runner.os }}] Install Terraform"
+        uses: autero1/action-terraform@v1.0.3
         with:
-          version: 1.0.8
+          terraform_version: 1.0.8
       - name: "[${{ runner.os }}] Setup SSH"
         run: |
           mkdir -p ~/.ssh
