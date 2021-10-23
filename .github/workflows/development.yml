@@ -84,7 +84,7 @@ jobs:
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
-      - name: "Run and test native binary"
+      - name: "Smoke test native binary"
         run: .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
