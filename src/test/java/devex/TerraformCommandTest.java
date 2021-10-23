@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GitlabCommandTest {
+public class TerraformCommandTest {
 
     @Test
     public void testVersion() {
@@ -17,7 +17,7 @@ public class GitlabCommandTest {
         System.setOut(new PrintStream(baos));
 
         try (ApplicationContext ctx = ApplicationContext.run(Environment.CLI, Environment.TEST)) {
-            String[] args = new String[]{"gitlab", "-V"};
+            String[] args = new String[]{"terraform", "-V"};
             DevexCommand.execute(ctx, args);
 
             assertThat(baos.toString()).contains("java: 16")
@@ -32,13 +32,12 @@ public class GitlabCommandTest {
         System.setOut(new PrintStream(baos));
 
         try (ApplicationContext ctx = ApplicationContext.run(Environment.CLI, Environment.TEST)) {
-            String[] args = new String[]{"gitlab", "-h"};
+            String[] args = new String[]{"terraform", "-h"};
             DevexCommand.execute(ctx, args);
 
             final String output = baos.toString();
-            assertThat(output).contains("GitLab tools, saving time by automating gruntwork.")
-                              .contains("GitLab configuration:")
-                              .contains("The GitLab URL and private token are read from the environment")
+            assertThat(output).contains("Terraform tools, saving time by automating gruntwork.")
+                              .contains("Terraform configuration:")
                               .contains("Options:")
                               .contains("Commands:")
                               .contains("Copyright(c) 2021 - Miguel Ferreira - GitHub/GitLab: @miguelaferreira");

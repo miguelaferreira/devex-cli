@@ -7,7 +7,7 @@ import picocli.CommandLine.Command;
         name = "github",
         aliases = "gh",
         header = {
-                "GitHub tools."
+                "GitHub tools, saving time by automating gruntwork."
         },
         subcommands = {GithubCloneCommand.class},
         descriptionHeading = "%nGitHub configuration:%n%n",

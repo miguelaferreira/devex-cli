@@ -1,11 +1,5 @@
 package devex;
 
-import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
-
 import ch.qos.logback.core.joran.spi.JoranException;
 import io.micronaut.configuration.picocli.MicronautFactory;
 import io.micronaut.context.ApplicationContext;
@@ -16,6 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Command(
@@ -118,10 +118,10 @@ public class DevexCommand {
                 log.debug("Set all loggers to DEBUG");
             } else if (veryVerbose) {
                 LoggingConfiguration.configureLoggers(loggingSystem, LogLevel.TRACE, false);
-                log.trace("Set application loggers to TRACE");
+                log.trace("Set application loggers to TRACE.");
             } else if (verbose) {
                 LoggingConfiguration.configureLoggers(loggingSystem, LogLevel.DEBUG, false);
-                log.debug("Set application loggers to DEBUG");
+                log.debug("Set application loggers to DEBUG.");
             } else {
                 LoggingConfiguration.configureLoggers(loggingSystem, LogLevel.INFO, false);
             }

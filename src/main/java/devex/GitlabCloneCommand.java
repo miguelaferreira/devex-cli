@@ -1,7 +1,5 @@
 package devex;
 
-import javax.inject.Inject;
-
 import devex.git.GitCloneProtocol;
 import devex.git.GitRepository;
 import devex.git.GitService;
@@ -18,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+
+import javax.inject.Inject;
 
 @Slf4j
 @Command(
@@ -126,7 +126,7 @@ public class GitlabCloneCommand implements Runnable {
                           }
                       });
 
-        log.info("All done");
+        log.info("All done.");
     }
 
     private GitRepository buildGitRepository(GitlabProject project) {
