@@ -1,12 +1,9 @@
 [
 {
-<<<<<<< HEAD
-=======
   "name":"apple.security.AppleProvider",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"byte[]"
 },
 {
@@ -56,21 +53,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"com.fasterxml.jackson.databind.JsonDeserializer[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.JsonSerializer[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.KeyDeserializer[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.Module[]"
-},
-{
-=======
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"com.fasterxml.jackson.databind.deser.BeanDeserializerModifier[]"
 },
 {
@@ -316,21 +298,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"devex.$DevexCommandDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"devex.$GithubCloneCommandDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"devex.$GitlabCloneCommandDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"devex.$TerraformTaintSecretsCommandDefinitionClass",
-=======
   "name":"devex.$DevexCommand$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -344,7 +311,6 @@
 },
 {
   "name":"devex.$TerraformTaintSecretsCommand$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -392,19 +358,11 @@
   "allDeclaredMethods":true
 },
 {
-<<<<<<< HEAD
-  "name":"devex.git.$GitServiceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"devex.github.$GithubClient$InterceptedDefinitionClass",
-=======
   "name":"devex.git.$GitService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"devex.github.$GithubClient$Intercepted$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -416,19 +374,11 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"devex.github.$GithubServiceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"devex.github.$GithubTokenFilterDefinitionClass",
-=======
   "name":"devex.github.$GithubService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"devex.github.$GithubTokenFilter$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -444,11 +394,7 @@
   "allDeclaredConstructors":true
 },
 {
-<<<<<<< HEAD
-  "name":"devex.gitlab.$GitlabClient$InterceptedDefinitionClass",
-=======
   "name":"devex.gitlab.$GitlabClient$Intercepted$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -460,11 +406,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"devex.gitlab.$GitlabServiceDefinitionClass",
-=======
   "name":"devex.gitlab.$GitlabService$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -490,11 +432,7 @@
   "allDeclaredConstructors":true
 },
 {
-<<<<<<< HEAD
-  "name":"devex.terraform.$TerraformCommandDefinitionClass",
-=======
   "name":"devex.terraform.$TerraformCommand$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -502,26 +440,18 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"devex.terraform.$TerraformStateServiceDefinitionClass",
-=======
   "name":"devex.terraform.$TerraformStateService$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"io.micronaut.aop.Interceptor[]"
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.buffer.netty.$NettyByteBufferFactoryDefinitionClass",
-=======
   "name":"io.micronaut.aop.internal.InterceptorRegistryBean",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"io.micronaut.buffer.netty.$NettyByteBufferFactory$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -533,16 +463,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.core.async.publisher.Publishers"
-},
-{
-  "name":"io.micronaut.discovery.$DefaultCompositeDiscoveryClientDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.discovery.$DefaultServiceInstanceIdGeneratorDefinitionClass",
-=======
   "name":"io.micronaut.context.event.ApplicationEventPublisherFactory",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -555,7 +475,6 @@
 },
 {
   "name":"io.micronaut.discovery.$DefaultServiceInstanceIdGenerator$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -563,21 +482,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.discovery.cloud.digitalocean.$DigitalOceanMetadataConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.discovery.cloud.digitalocean.$DigitalOceanMetadataResolverDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.discovery.config.$DefaultCompositeConfigurationClientDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.health.$DefaultCurrentHealthStatusDefinitionClass",
-=======
   "name":"io.micronaut.discovery.cloud.digitalocean.$DigitalOceanMetadataConfiguration$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -591,7 +495,6 @@
 },
 {
   "name":"io.micronaut.health.$DefaultCurrentHealthStatus$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -599,11 +502,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.health.$HeartbeatConfigurationDefinitionClass",
-=======
   "name":"io.micronaut.health.$HeartbeatConfiguration$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -611,32 +510,13 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.health.$HeartbeatTaskDefinitionClass",
-=======
   "name":"io.micronaut.health.$HeartbeatTask$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"io.micronaut.http.HttpMethod[]"
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.bind.$DefaultRequestBinderRegistryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$DefaultHttpClientConfiguration$DefaultConnectionPoolConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$DefaultHttpClientConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$DefaultLoadBalancerResolverDefinitionClass",
-=======
   "name":"io.micronaut.http.bind.$DefaultRequestBinderRegistry$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -654,7 +534,6 @@
 },
 {
   "name":"io.micronaut.http.client.$DefaultLoadBalancerResolver$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -662,92 +541,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$ServiceConnectionPoolConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$ServiceSslClientConfiguration$DefaultKeyConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$ServiceSslClientConfiguration$DefaultKeyStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$ServiceSslClientConfiguration$DefaultTrustStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$ServiceSslClientConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientFactory$HealthCheckStarter1DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientFactory$ServiceInstanceList0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.$ServiceHttpClientFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.bind.$DefaultHttpClientBinderRegistryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.filter.$DefaultHttpClientFilterResolverDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.interceptor.$HttpClientIntroductionAdviceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.interceptor.configuration.$DefaultClientVersioningConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.interceptor.configuration.$NamedClientVersioningConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.loadbalance.$DiscoveryClientLoadBalancerFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.loadbalance.$LoadBalancerConvertersDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.loadbalance.$ServiceInstanceListLoadBalancerFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.netty.$RxNettyHttpClientRegistry$HttpClient0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.netty.$RxNettyHttpClientRegistryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$12",
-  "methods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
-},
-{
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$16$1"
-},
-{
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$8"
-=======
   "name":"io.micronaut.http.client.$ServiceHttpClientConfiguration$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -832,7 +625,6 @@
 },
 {
   "name":"io.micronaut.http.client.netty.DefaultHttpClient$6"
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
 },
 {
   "name":"io.micronaut.http.client.netty.DefaultHttpClient$Http2SettingsHandler"
@@ -849,21 +641,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.client.netty.ssl.$NettyClientSslBuilderDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.client.rxjava2.$RxReactiveClientResultTransformerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.codec.$CodecConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.converters.$HttpConverterRegistrarDefinitionClass",
-=======
   "name":"io.micronaut.http.client.netty.ssl.$NettyClientSslBuilder$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -877,7 +654,6 @@
 },
 {
   "name":"io.micronaut.http.cookie.$SameSiteConverter$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -912,25 +688,6 @@
   "allDeclaredMethods":true
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupRegistry$DefaultEventLoopGroup1DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupRegistry$EventLoopGroup0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupRegistryDefinitionClass",
-=======
   "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupConfiguration$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -948,7 +705,6 @@
 },
 {
   "name":"io.micronaut.http.netty.channel.$DefaultEventLoopGroupRegistry$EventLoopGroup0$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -956,11 +712,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.netty.channel.$EpollEventLoopGroupFactoryDefinitionClass",
-=======
   "name":"io.micronaut.http.netty.channel.$EpollEventLoopGroupFactory$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -968,116 +720,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.http.netty.channel.$KQueueEventLoopGroupFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$NettyThreadFactory$NettyThreadFactory0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$NettyThreadFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.$NioEventLoopGroupFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.converters.$DefaultChannelOptionFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.converters.$EpollChannelOptionFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.channel.converters.$KQueueChannelOptionFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.configuration.$NettyGlobalConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.websocket.$NettyServerWebSocketBroadcasterDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.netty.websocket.$WebSocketMessageEncoderDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.resource.$ResourceLoaderFactory$FileSystemResourceLoader1DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.resource.$ResourceLoaderFactory$GetClassPathResourceLoader0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.resource.$ResourceLoaderFactory$ResourceResolver2DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.resource.$ResourceLoaderFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ClientSslConfiguration$DefaultKeyConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ClientSslConfiguration$DefaultKeyStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ClientSslConfiguration$DefaultTrustStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ClientSslConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$DefaultSslConfiguration$DefaultKeyConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$DefaultSslConfiguration$DefaultKeyStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$DefaultSslConfiguration$DefaultTrustStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$DefaultSslConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ServerSslConfiguration$DefaultKeyConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ServerSslConfiguration$DefaultKeyStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ServerSslConfiguration$DefaultTrustStoreConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.ssl.$ServerSslConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.util.$OutgoingHttpRequestProcessorImplDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-=======
   "name":"io.micronaut.http.netty.channel.$KQueueEventLoopGroupFactory$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1194,117 +836,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"io.micronaut.inject.provider.JavaxProviderBeanDefinition"
-},
-{
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"io.micronaut.jackson.$BeanConfiguration",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.jackson.$JacksonConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.$ObjectMapperFactory$ObjectMapper0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.$ObjectMapperFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.bind.$JacksonBeanPropertyBinderDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.codec.$JsonMediaTypeCodecDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.codec.$JsonStreamMediaTypeCodecDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.convert.$JacksonConverterRegistrarDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.env.CloudFoundryVcapApplicationPropertySourceLoader",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.env.CloudFoundryVcapServicesPropertySourceLoader",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.env.EnvJsonPropertySourceLoader",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.env.JsonPropertySourceLoader",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.modules.$BeanIntrospectionModuleDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$ConvertibleMultiValuesSerializerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$ConvertibleValuesSerializerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$JacksonObjectSerializerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$OptionalValuesSerializerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$ResourceModuleDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.jackson.serialize.$ResourceSerializerModifierDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.logging.$LogLevel$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.logging.$PropertiesLoggingLevelsConfigurerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.logging.impl.$Log4jLoggingSystemDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.logging.impl.$LogbackLoggingSystemDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.reactive.flow.converters.$FlowConverterRegistrarDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.reactive.rxjava2.$RxInstrumenterFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.reactive.rxjava2.$RxJava2InstrumentationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.reactive.rxjava2.converters.$RxJavaConverterRegistrarDefinitionClass",
-=======
   "name":"io.micronaut.jackson.$JacksonConfiguration$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1438,7 +973,6 @@
 },
 {
   "name":"io.micronaut.reactive.reactor.instrument.$ReactorInstrumentation$ReactorInstrumenterFactory$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1446,217 +980,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"io.micronaut.retry.intercept.$DefaultRetryInterceptorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.retry.intercept.$RecoveryInterceptorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.$ApplicationConfiguration$InstanceConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.$ApplicationConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.context.$CompositeMessageSourceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.context.env.$ConfigurationIntroductionAdviceDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.context.scope.$ThreadLocalCustomScopeDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.context.scope.refresh.$RefreshInterceptorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.context.scope.refresh.$RefreshScopeDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.converters.time.$TimeConverterRegistrarDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.http.codec.$MediaTypeCodecRegistryFactory$MediaTypeCodecRegistry0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.http.codec.$MediaTypeCodecRegistryFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.http.codec.$TextPlainCodecDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.http.scope.$RequestCustomScopeDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.runtime.server.watch.event.$FileWatchRestartListenerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.$DefaultTaskExceptionHandlerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.$ScheduledExecutorTaskSchedulerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.async.$AsyncInterceptorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$DefaultExecutorSelectorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$DefaultThreadFactory$ThreadFactory0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$DefaultThreadFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$ExecutorFactory$EventLoopGroupThreadFactory0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$ExecutorFactory$ExecutorService1DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$ExecutorFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$IOExecutorServiceConfig$Configuration0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$IOExecutorServiceConfigDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$ScheduledExecutorServiceConfig$Configuration0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$ScheduledExecutorServiceConfigDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$UserExecutorConfiguration$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.executor.$UserExecutorConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.instrument.$ExecutorServiceInstrumenterDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.io.watch.$DefaultWatchThreadDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.io.watch.$FileWatchCondition$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.io.watch.$FileWatchConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.io.watch.$WatchServiceFactory$WatchService0DefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.io.watch.$WatchServiceFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.scheduling.processor.$ScheduledMethodProcessorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.$ValidatingInterceptorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.exceptions.$ConstraintExceptionHandlerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.exceptions.$ValidationExceptionHandlerDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.$DefaultClockProviderDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.$DefaultValidatorConfigurationDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.$DefaultValidatorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.$DefaultValidatorFactoryDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.constraints.$DefaultConstraintValidators$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.constraints.$DefaultConstraintValidatorsDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.constraints.$EmailValidatorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.constraints.$PatternValidatorDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.extractors.$DefaultValueExtractors$IntrospectionRef",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.extractors.$DefaultValueExtractorsDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.messages.$DefaultValidationMessagesDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.validation.validator.resolver.$CompositeTraversableResolverDefinitionClass",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.websocket.interceptor.$ClientWebSocketInterceptorDefinitionClass",
-=======
   "name":"io.micronaut.retry.intercept.$DefaultRetryInterceptor$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1866,7 +1189,6 @@
 },
 {
   "name":"io.micronaut.websocket.interceptor.$ClientWebSocketInterceptor$Definition$Reference",
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1984,11 +1306,8 @@
 {
   "name":"io.netty.handler.ssl.ApplicationProtocolNegotiationHandler",
   "methods":[
-<<<<<<< HEAD
-=======
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
     {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]
@@ -2053,21 +1372,6 @@
   "fields":[{"name":"producerLimit"}]
 },
 {
-<<<<<<< HEAD
-  "name":"io.reactivex.Completable"
-},
-{
-  "name":"io.reactivex.Maybe"
-},
-{
-  "name":"io.reactivex.Observable"
-},
-{
-  "name":"io.reactivex.Single"
-},
-{
-=======
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"java.io.FilePermission"
 },
 {
@@ -2076,8 +1380,6 @@
   "allDeclaredMethods":true
 },
 {
-<<<<<<< HEAD
-=======
   "name":"java.lang.ProcessBuilder",
   "methods":[{"name":"redirectError","parameterTypes":["java.lang.ProcessBuilder$Redirect"] }]
 },
@@ -2086,7 +1388,6 @@
   "fields":[{"name":"INHERIT"}]
 },
 {
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"java.lang.RuntimePermission"
 },
 {
@@ -2329,15 +1630,12 @@
   "allDeclaredMethods":true
 },
 {
-<<<<<<< HEAD
-=======
   "name":"reactor.core.publisher.Flux"
 },
 {
   "name":"reactor.core.publisher.Mono"
 },
 {
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"sun.misc.Unsafe",
   "fields":[{"name":"theUnsafe"}],
   "methods":[
@@ -2374,13 +1672,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"sun.security.provider.JavaKeyStore$DualFormatJKS",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-=======
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"sun.security.provider.JavaKeyStore$JKS",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -2413,13 +1704,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"sun.security.provider.certpath.PKIXCertPathValidator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-=======
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"sun.security.rsa.PSSParameters",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -2440,17 +1724,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-<<<<<<< HEAD
-  "name":"sun.security.rsa.RSASignature$SHA256withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.rsa.RSASignature$SHA384withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-=======
->>>>>>> fd18836 (Upgrade micronaut to version 3.1.1)
   "name":"sun.security.rsa.RSASignature$SHA512withRSA",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
