@@ -6,6 +6,9 @@ import picocli.CommandLine.Command;
 @Command(
         name = "gitlab",
         aliases = "gl",
+        header = {
+                "GitLab tools."
+        },
         subcommands = {GitlabCloneCommand.class},
         descriptionHeading = "%nGitLab configuration:%n%n",
         description = {

@@ -6,6 +6,9 @@ import picocli.CommandLine.Command;
 @Command(
         name = "github",
         aliases = "gh",
+        header = {
+                "GitHub tools."
+        },
         subcommands = {GithubCloneCommand.class},
         descriptionHeading = "%nGitHub configuration:%n%n",
         description = {

@@ -6,6 +6,9 @@ import picocli.CommandLine.Command;
 @Command(
         name = "terraform",
         aliases = "tf",
+        header = {
+                "Terraform tools."
+        },
         subcommands = {TerraformTaintSecretsCommand.class},
         descriptionHeading = "%nTerraform configuration:%n%n",
         description = {
