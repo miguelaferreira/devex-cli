@@ -60,6 +60,13 @@ jobs:
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
+      - name: "Upload Test Reports"
+        uses: actions/upload-artifact@v2.2.4
+        if: failure()
+        with:
+          name: test-reports
+          path: build/reports/tests
+          retention-days: 5
       - name: "Publish Unit Test Results"
         uses: EnricoMi/publish-unit-test-result-action/composite@v1
         if: always()
