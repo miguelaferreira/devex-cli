@@ -36,7 +36,7 @@ public class GitlabCommandTest {
             DevexCommand.execute(ctx, args);
 
             final String output = baos.toString();
-            assertThat(output).contains("Developer experience tools, saving time by automating gruntwork.")
+            assertThat(output).contains("GitLab tools, saving time by automating gruntwork.")
                               .contains("GitLab configuration:")
                               .contains("The GitLab URL and private token are read from the environment")
                               .contains("Options:")

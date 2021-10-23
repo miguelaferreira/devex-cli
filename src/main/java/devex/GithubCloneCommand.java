@@ -100,9 +100,9 @@ public class GithubCloneCommand implements Runnable {
                 githubService.getOrganizationRepositories(organization.getName())
                              .map(repository -> Tuple.of(repository, buildGitRepository(repository)))
                              .map(tuple -> tuple.map2(
-                                     repository -> recurseSubmodules
-                                             ? gitService.cloneOrInitSubmodules(repository, localPath)
-                                             : gitService.clone(repository, localPath)
+                                             repository -> recurseSubmodules
+                                                     ? gitService.cloneOrInitSubmodules(repository, localPath)
+                                                     : gitService.clone(repository, localPath)
                                      )
                              );
 
@@ -117,7 +117,7 @@ public class GithubCloneCommand implements Runnable {
                               }
                           });
 
-        log.info("All done");
+        log.info("All done.");
     }
 
     private GitRepository buildGitRepository(GithubRepository repository) {

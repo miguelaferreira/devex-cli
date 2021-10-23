@@ -1,8 +1,5 @@
 package devex;
 
-import javax.inject.Inject;
-import java.nio.file.Path;
-
 import devex.terraform.TerraformModuleDirectory;
 import devex.terraform.TerraformStateService;
 import io.reactivex.Flowable;
@@ -10,6 +7,9 @@ import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+
+import javax.inject.Inject;
+import java.nio.file.Path;
 
 @Slf4j
 @Command(
@@ -65,9 +65,9 @@ public class TerraformTaintSecretsCommand implements Runnable {
                                 }
                             });
             if (!untaint) {
-                log.info("To rotate the secrets run terraform apply on the module");
+                log.info("To rotate the secrets run terraform apply on the module.");
             }
-            log.info("All done");
+            log.info("All done.");
         }
     }
 

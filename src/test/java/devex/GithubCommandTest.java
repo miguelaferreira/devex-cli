@@ -34,7 +34,7 @@ public class GithubCommandTest {
             DevexCommand.execute(ctx, args);
 
             final String output = baos.toString();
-            assertThat(output).contains("Developer experience tools, saving time by automating gruntwork.")
+            assertThat(output).contains("GitHub tools, saving time by automating gruntwork.")
                               .contains("GitHub configuration:")
                               .contains("The GitHub URL and private token are read from the environment")
                               .contains("Options:")

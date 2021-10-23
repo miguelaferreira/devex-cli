@@ -7,7 +7,7 @@ import picocli.CommandLine.Command;
         name = "gitlab",
         aliases = "gl",
         header = {
-                "GitLab tools."
+                "GitLab tools, saving time by automating gruntwork."
         },
         subcommands = {GitlabCloneCommand.class},
         descriptionHeading = "%nGitLab configuration:%n%n",
