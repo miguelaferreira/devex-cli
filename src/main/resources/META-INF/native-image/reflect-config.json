@@ -32,6 +32,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"ch.qos.logback.classic.pattern.RootCauseFirstThrowableProxyConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"ch.qos.logback.classic.pattern.ThreadConverter",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -81,6 +85,9 @@
 },
 {
   "name":"com.fasterxml.jackson.databind.ser.Serializers[]"
+},
+{
+  "name":"com.fasterxml.jackson.databind.type.TypeModifier[]"
 },
 {
   "name":"com.jcraft.jsch.DH25519",
@@ -311,6 +318,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"devex.$TerraformTaintSecretsCommandDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"devex.DevexCommand",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
@@ -342,6 +353,17 @@
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.TerraformCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.TerraformTaintSecretsCommand",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
 },
 {
   "name":"devex.git.$GitServiceDefinitionClass",
@@ -416,6 +438,18 @@
   "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "allDeclaredConstructors":true
+},
+{
+  "name":"devex.terraform.$TerraformCommandDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.terraform.$TerraformState$IntrospectionRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"devex.terraform.$TerraformStateServiceDefinitionClass",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"io.micronaut.aop.Interceptor[]"

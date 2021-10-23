@@ -3,7 +3,17 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%rEx{full,
+                io.netty.channel.AbstractChannelHandlerContext,
+                io.micronaut.http.netty.stream.HttpStreamsClientHandler,
+                io.micronaut.http.netty.stream.HttpStreamsHandler,
+                org.junit.jupiter,
+                org.junit.platform.engine,
+                org.junit.platform.launcher,
+                org.gradle.internal,
+                org.gradle.api.internal,
+                java.base}
+            </pattern>
         </encoder>
     </appender>
 
@@ -11,6 +21,6 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="gitlab.clone" level="TRACE"/>
+    <logger name="devex" level="TRACE"/>
     <logger name="io.micronaut.http.client" level="TRACE"/>
 </configuration>

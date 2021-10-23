@@ -21,7 +21,7 @@ jobs:
           path: |
             ~/.gradle
             ${GITHUB_WORKSPACE}/.gradle
-          key: ${{ matrix.os }}-devex-release-java11
+          key: ${{ matrix.os }}-devex-release-java16-graal-21.2.0
       - name: "[${{ runner.os }}] Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:
@@ -30,6 +30,10 @@ jobs:
           arch: 'amd64'
       - name: "[${{ runner.os }}] Install native-image"
         run: gu install native-image
+      - name: Install Terraform
+        uses: little-core-labs/install-terraform@v2.0.0
+        with:
+          version: 1.0.8
       - name: "[${{ runner.os }}] Setup SSH"
         run: |
           mkdir -p ~/.ssh
@@ -39,7 +43,7 @@ jobs:
         env:
           bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
       - name: "[${{ runner.os }}] Gradle build"
-        run: ./gradlew build nativeImage --info --stacktrace
+        run: ./gradlew build nativeImage
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}

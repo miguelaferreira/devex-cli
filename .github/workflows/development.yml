@@ -22,7 +22,7 @@ jobs:
             ~/.gradle
             ${GITHUB_WORKSPACE}/.gradle
             ~/.cache/pip/
-          key: ${{ runner.os }}-devex-development-java11
+          key: ${{ runner.os }}-devex-development-java16-graal-21.2.0
       - name: "Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:
@@ -32,6 +32,10 @@ jobs:
       - name: "Install native-image"
         run: |
           gu install native-image
+      - name: Install Terraform
+        uses: little-core-labs/install-terraform@v2.0.0
+        with:
+          version: 1.0.8
       - name: "Setup SSH"
         run: |
           mkdir -p ~/.ssh
@@ -52,10 +56,17 @@ jobs:
           bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
           bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
       - name: "Gradle build"
-        run: ./gradlew build --info --stacktrace
+        run: ./gradlew build
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
+      - name: "Upload Test Reports"
+        uses: actions/upload-artifact@v2.2.4
+        if: failure()
+        with:
+          name: test-reports
+          path: build/reports/tests
+          retention-days: 5
       - name: "Publish Unit Test Results"
         uses: EnricoMi/publish-unit-test-result-action/composite@v1
         if: always()

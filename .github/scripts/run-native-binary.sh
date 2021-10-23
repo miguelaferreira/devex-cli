@@ -75,3 +75,21 @@ build/native-image/application github clone -x -r -c HTTPS devex-cli-example "${
 cd "${local_path}/devex-cli-example/a-private-repository"
 [[ "$(git remote -v | head -n 1)" == *"https://"* ]]
 cd -
+
+################################################
+# Terraform
+################################################
+terraform_module_dir="src/test/resources/terraform/module1"
+cd "${terraform_module_dir}"
+terraform init -input=false
+terraform apply -auto-approve
+cd -
+
+say "[TERRAFORM] Asking to taint secrets"
+TERRAFORM_SECRETS="random_string" build/native-image/application terraform taint-secrets "${terraform_module_dir}"
+say "[TERRAFORM] Asking to untaint secrets"
+TERRAFORM_SECRETS="random_string" build/native-image/application terraform taint-secrets -u "${terraform_module_dir}"
+
+cd "${terraform_module_dir}"
+terraform destroy -auto-approve
+cd -
