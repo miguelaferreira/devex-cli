@@ -21,7 +21,7 @@ jobs:
           path: |
             ~/.gradle
             ${GITHUB_WORKSPACE}/.gradle
-          key: ${{ matrix.os }}-devex-release-java11
+          key: ${{ matrix.os }}-devex-release-java16-graal-21.2.0
       - name: "[${{ runner.os }}] Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:

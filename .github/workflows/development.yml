@@ -22,7 +22,7 @@ jobs:
             ~/.gradle
             ${GITHUB_WORKSPACE}/.gradle
             ~/.cache/pip/
-          key: ${{ runner.os }}-devex-development-java11
+          key: ${{ runner.os }}-devex-development-java16-graal-21.2.0
       - name: "Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:
