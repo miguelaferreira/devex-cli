@@ -1,7 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.micronaut.application") version "2.0.3"
-    id 'org.javamodularity.moduleplugin' version '1.8.3'
+    id("org.javamodularity.moduleplugin") version "1.8.10"
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -97,6 +97,10 @@ modularity.patchModule('org.eclipse.jgit', 'org.eclipse.jgit.ssh.jsch-5.11.0.202
 modularity.patchModule('io.micronaut.runtime', "micronaut-context-${ext.micronautVersion}.jar")
 
 mainClassName = "$moduleName/devex.DevexCommand"
+
+startScripts {
+    applicationName = 'devex'
+}
 
 distributions {
     main {
