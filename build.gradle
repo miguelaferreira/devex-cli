@@ -97,3 +97,26 @@ modularity.patchModule('org.eclipse.jgit', 'org.eclipse.jgit.ssh.jsch-5.11.0.202
 modularity.patchModule('io.micronaut.runtime', "micronaut-context-${ext.micronautVersion}.jar")
 
 mainClassName = "$moduleName/devex.DevexCommand"
+
+distributions {
+    main {
+        contents {
+            from("${project.rootProject.projectDir}/LICENSE") {
+                into ''
+            }
+        }
+    }
+}
+
+task exploded(type: Copy, dependsOn: ['distZip']) {
+    from zipTree(distZip.outputs.files.singleFile)
+    into "${project.buildDir}/exploded"
+    eachFile { FileCopyDetails fcd ->
+        fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
+    }
+    onlyIf {
+        distZip.outputs.files.singleFile.exists()
+    }
+}
+
+assemble.dependsOn('exploded')
