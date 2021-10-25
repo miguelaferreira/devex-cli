@@ -23,4 +23,8 @@ module devex {
     requires commons.exec;
 
     exports devex;
+    exports devex.git;
+    exports devex.gitlab;
+    exports devex.github;
+    exports devex.terraform;
 }
