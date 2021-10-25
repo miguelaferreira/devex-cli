@@ -1,7 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.micronaut.application") version "2.0.3"
-    id 'org.javamodularity.moduleplugin' version '1.8.3'
+    id("org.javamodularity.moduleplugin") version "1.8.10"
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -97,26 +97,3 @@ modularity.patchModule('org.eclipse.jgit', 'org.eclipse.jgit.ssh.jsch-5.11.0.202
 modularity.patchModule('io.micronaut.runtime', "micronaut-context-${ext.micronautVersion}.jar")
 
 mainClassName = "$moduleName/devex.DevexCommand"
-
-distributions {
-    main {
-        contents {
-            from("${project.rootProject.projectDir}/LICENSE") {
-                into ''
-            }
-        }
-    }
-}
-
-task exploded(type: Copy, dependsOn: ['distZip']) {
-    from zipTree(distZip.outputs.files.singleFile)
-    into "${project.buildDir}/exploded"
-    eachFile { FileCopyDetails fcd ->
-        fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
-    }
-    onlyIf {
-        distZip.outputs.files.singleFile.exists()
-    }
-}
-
-assemble.dependsOn('exploded')
