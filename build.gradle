@@ -26,9 +26,16 @@ dependencies {
 
     annotationProcessor("info.picocli:picocli-codegen")
     implementation("info.picocli:picocli")
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut:micronaut-runtime")
-    implementation("io.micronaut.picocli:micronaut-picocli")
+    implementation("io.micronaut:micronaut-http-client") {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    implementation("io.micronaut:micronaut-runtime") {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    implementation("io.micronaut.picocli:micronaut-picocli") {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+
     implementation("io.micronaut:micronaut-validation")
 
     // patch vulnerable jackson dependency
@@ -44,7 +51,9 @@ dependencies {
 
 
     implementation 'io.vavr:vavr:0.10.3'
-    implementation("io.vavr:vavr-jackson:0.10.3")
+    implementation("io.vavr:vavr-jackson:0.10.3") {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r'
     implementation('org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:5.11.0.202103091610-r') {
