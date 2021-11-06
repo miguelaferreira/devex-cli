@@ -170,8 +170,8 @@ jobs:
           body: |
             This PR
             - Updates devex-cli formulas to version ${{ env.new_version }}
-            - Source archive sha is ${{ steps.update-formula.outputs.archive-sha }}
-            - All files package sha is ${{ env.all_files_sha }}
+            - Source archive sha is `${{ steps.update-formula.outputs.archive-sha }}`
+            - All files package sha is `${{ env.all_files_sha }}`
             - Auto-generated from [devex-cli Continuous Delivery workflow][1] ([workflow src][2])
 
             [1]: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
