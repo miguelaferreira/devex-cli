@@ -51,8 +51,8 @@ jobs:
       - name: "Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:
-          graalvm: '21.2.0'
-          java: 'java16'
+          graalvm: '21.3.0'
+          java: 'java17'
           arch: 'amd64'
 
       - name: Autobuild

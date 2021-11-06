@@ -34,13 +34,13 @@ curl -s "https://get.sdkman.io" | bash
 Then install GraalVM.
 
 ```bash
-sdk install java 21.2.0.r16-grl
+sdk install java 21.3.0.r17-grl
 ```
 
 Load the installed GraalVM on the current terminal.
 
 ```bash
-sdk use java 21.2.0.r16-grl
+sdk use java 21.3.0.r17-grl
 ```
 
 To build native images using GraalVM it is necessary to install the `native-image` tool.
