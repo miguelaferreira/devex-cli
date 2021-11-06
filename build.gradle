@@ -88,6 +88,12 @@ test {
 //    }
 }
 
+// Workaround for using gradle 7.3 with java 17
+// src: https://github.com/micronaut-projects/micronaut-gradle-plugin/issues/296
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
 processResources {
     from("VERSION")
 }
