@@ -31,6 +31,13 @@ dependencies {
     implementation("io.micronaut.picocli:micronaut-picocli")
     implementation("io.micronaut:micronaut-validation")
 
+    // patch vulnerable jackson dependency
+    constraints {
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.9.10.6") {
+            because 'previous versions (com.fasterxml.jackson.core:jackson-databind@2.7.2) has known vulnerabilities'
+        }
+    }
+
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
