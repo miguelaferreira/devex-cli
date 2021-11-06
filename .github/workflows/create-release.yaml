@@ -151,13 +151,9 @@ jobs:
 
           echo "::set-output name=archive-sha::${archive_sha}"
 
-          # TODO: use the commented lines when gradle supports Java 17
-          #       and issue https://github.com/miguelaferreira/homebrew-tools/issues/10 is addressed
-          # scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${archive_sha}"
-          #
-          # scripts/update-formula.sh "Formula/devex-cli-native-binary.rb" "${new_version}" "${all_files_sha}"
+          scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${archive_sha}"
+          scripts/update-formula.sh "Formula/devex-cli-native-binary.rb" "${new_version}" "${all_files_sha}"
 
-          scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${all_files_sha}"
         env:
           new_version: ${{ env.new_version }}
           all_files_sha: ${{ env.all_files_sha }}
