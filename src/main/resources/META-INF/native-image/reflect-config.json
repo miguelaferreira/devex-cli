@@ -635,14 +635,14 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$12",
+  "name":"io.micronaut.http.client.netty.DefaultHttpClient$11",
   "methods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
 },
 {
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$16$1"
+  "name":"io.micronaut.http.client.netty.DefaultHttpClient$15$1"
 },
 {
-  "name":"io.micronaut.http.client.netty.DefaultHttpClient$8"
+  "name":"io.micronaut.http.client.netty.DefaultHttpClient$7"
 },
 {
   "name":"io.micronaut.http.client.netty.DefaultHttpClient$Http2SettingsHandler"
