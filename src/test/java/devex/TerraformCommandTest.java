@@ -20,7 +20,7 @@ public class TerraformCommandTest {
             String[] args = new String[]{"terraform", "-V"};
             DevexCommand.execute(ctx, args);
 
-            assertThat(baos.toString()).contains("java: 16")
+            assertThat(baos.toString()).contains("java: " + System.getProperty("java.version"))
                                        .contains("devex cli: ")
                                        .contains(new DevexCommand.AppVersionProvider().getVersionText());
         }

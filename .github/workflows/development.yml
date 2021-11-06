@@ -22,12 +22,12 @@ jobs:
             ~/.gradle
             ${GITHUB_WORKSPACE}/.gradle
             ~/.cache/pip/
-          key: ${{ runner.os }}-devex-development-java16-graal-21.2.0
+          key: ${{ runner.os }}-devex-development-java16-graal-21.3.0-r17
       - name: "Install GraalVM"
         uses: DeLaGuardo/setup-graalvm@4.0
         with:
-          graalvm: '21.2.0'
-          java: 'java16'
+          graalvm: '21.3.0'
+          java: 'java17'
           arch: 'amd64'
       - name: "Install native-image"
         run: |

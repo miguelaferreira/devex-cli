@@ -1,6 +1,51 @@
 [
 {
-  "name":"byte[]"
+  "name":"[B"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.JsonDeserializer;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.JsonSerializer;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.KeyDeserializer;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.Module;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.BeanDeserializerModifier;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.Deserializers;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.KeyDeserializers;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.ValueInstantiators;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.ser.BeanSerializerModifier;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.ser.Serializers;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.type.TypeModifier;"
+},
+{
+  "name":"[Lio.micronaut.aop.Interceptor;"
+},
+{
+  "name":"[Lio.micronaut.http.HttpMethod;"
+},
+{
+  "name":"[Ljava.lang.String;"
+},
+{
+  "name":"[Lsun.security.pkcs.SignerInfo;"
 },
 {
   "name":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
@@ -49,28 +94,16 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.fasterxml.jackson.databind.JsonDeserializer[]"
+  "name":"ch.qos.logback.core.OutputStreamAppender",
+  "methods":[{"name":"setEncoder","parameterTypes":["ch.qos.logback.core.encoder.Encoder"] }]
 },
 {
-  "name":"com.fasterxml.jackson.databind.JsonSerializer[]"
+  "name":"ch.qos.logback.core.encoder.LayoutWrappingEncoder",
+  "methods":[{"name":"setParent","parameterTypes":["ch.qos.logback.core.Appender"] }]
 },
 {
-  "name":"com.fasterxml.jackson.databind.KeyDeserializer[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.Module[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.deser.BeanDeserializerModifier[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.deser.Deserializers[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.deser.KeyDeserializers[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.deser.ValueInstantiators[]"
+  "name":"ch.qos.logback.core.pattern.PatternLayoutEncoderBase",
+  "methods":[{"name":"setPattern","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"com.fasterxml.jackson.databind.ext.Java7HandlersImpl",
@@ -79,15 +112,6 @@
 {
   "name":"com.fasterxml.jackson.databind.ext.Java7SupportImpl",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.fasterxml.jackson.databind.ser.BeanSerializerModifier[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.ser.Serializers[]"
-},
-{
-  "name":"com.fasterxml.jackson.databind.type.TypeModifier[]"
 },
 {
   "name":"com.jcraft.jsch.DH25519",
@@ -286,6 +310,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.sun.crypto.provider.GaloisCounterMode$AESGCM",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.sun.crypto.provider.HmacCore$HmacSHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -452,9 +480,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"io.micronaut.aop.Interceptor[]"
-},
-{
   "name":"io.micronaut.buffer.netty.$NettyByteBufferFactoryDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -512,9 +537,6 @@
 {
   "name":"io.micronaut.health.$HeartbeatTaskDefinitionClass",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"io.micronaut.http.HttpMethod[]"
 },
 {
   "name":"io.micronaut.http.bind.$DefaultRequestBinderRegistryDefinitionClass",
@@ -1352,9 +1374,6 @@
   "name":"java.lang.String"
 },
 {
-  "name":"java.lang.String[]"
-},
-{
   "name":"java.lang.System",
   "methods":[{"name":"console","parameterTypes":[] }]
 },
@@ -1414,9 +1433,6 @@
 },
 {
   "name":"java.security.KeyStoreSpi"
-},
-{
-  "name":"java.security.MessageDigestSpi"
 },
 {
   "name":"java.security.SecureRandomParameters"
@@ -1593,8 +1609,7 @@
   "methods":[
     {"name":"copyMemory","parameterTypes":["java.lang.Object","long","java.lang.Object","long","long"] }, 
     {"name":"getAndAddLong","parameterTypes":["java.lang.Object","long","long"] }, 
-    {"name":"getAndSetObject","parameterTypes":["java.lang.Object","long","java.lang.Object"] }, 
-    {"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }
+    {"name":"getAndSetObject","parameterTypes":["java.lang.Object","long","java.lang.Object"] }
   ]
 },
 {
@@ -1603,9 +1618,6 @@
     {"name":"publicSelectedKeys"}, 
     {"name":"selectedKeys"}
   ]
-},
-{
-  "name":"sun.security.pkcs.SignerInfo[]"
 },
 {
   "name":"sun.security.pkcs12.PKCS12KeyStore",
