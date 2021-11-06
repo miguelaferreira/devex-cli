@@ -64,8 +64,8 @@ application {
 
 java {
     modularity.inferModulePath.set(true)
-    sourceCompatibility = JavaVersion.toVersion("16")
-    targetCompatibility = JavaVersion.toVersion("16")
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
 }
 
 test {
