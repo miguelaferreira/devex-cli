@@ -82,29 +82,3 @@ The binary will be created under `build/native-image/application`. To execute th
 ```bash
 build/native-image/application -h
 ```
-
-### GraalVM Config
-
-In order to properly build a native binary some configuration needs to be generated from running the app as a jar. That
-configuration is then included as a resource for the application, and the native image builder will load that to
-properly create the native binary. That can be done by running the app from jar while setting a JVM agent to collect the
-configuration. During the app run all functionality should be exercised.
-
-```
-./gradlew clean build
-java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image -jar build/libs/devex-*-all.jar ...
-```
-
-However, not all functionality of the app can be exercised in a single run (eg. cloning via SSH vs HTTPS). Therefore,
-different executions need to be made (as many as different and independent features of the app), each generating a set
-of config, which at the end needs to be merged. See
-the [native-image manual](https://www.graalvm.org/reference-manual/native-image/BuildConfiguration/#the-native-image-configure-tool)
-for more information on how this works. Since the tool that merges the configuration (`native-image-configure-launcher`)
-is not shipped with graalvm releases, it has to be built. This project includes two binaries of the tool, one for macOS
-and the other for Linux, under [graalvm/bin](https://github.com/miguelaferreira/devex-cli/blob/master/graalvm/bin). During CI workflows that run on PR to `main` branch, the
-app is executed with the `native-image-agent` producing different sets of configurations for different combinations of
-input options and parameters. This is done in
-script [.github/scripts/create-native-image-build-config.sh](https://github.com/miguelaferreira/devex-cli/blob/master/.github/scripts/create-native-image-build-config.sh). Then
-the generated configurations are merged into the project's sources by another
-script, [.github/scripts/merge-native-image-build-config.sh](https://github.com/miguelaferreira/devex-cli/blob/master/.github/scripts/merge-native-image-build-config.sh).
-Finally, a new commit is made to the PR branch with the updated configuration.
