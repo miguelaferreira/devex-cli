@@ -24,7 +24,7 @@ class GithubServiceTest {
             final Flux<GithubRepository> repositories = service.getOrganizationRepositories("kubernetes");
 
             final Iterable<GithubRepository> iterable = repositories.collectList().block();
-            assertThat(iterable).hasSize(74);
+            assertThat(iterable).hasSize(75);
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }
