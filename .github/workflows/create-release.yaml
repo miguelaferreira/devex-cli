@@ -43,11 +43,11 @@ jobs:
         env:
           bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
       - name: "[${{ runner.os }}] Gradle build"
-        run: ./gradlew build nativeImage
+        run: ./gradlew build nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
-      - name: "[${{ runner.os }}] Run and test native image"
+      - name: "[${{ runner.os }}] Smoke test native image"
         run: .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: devex-${{ runner.os }}
-          path: build/native-image/application
+          path: build/native/nativeCompile/devex
           if-no-files-found: error
 
   create_release:

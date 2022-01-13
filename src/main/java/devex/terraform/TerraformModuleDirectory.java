@@ -1,10 +1,5 @@
 package devex.terraform;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.file.Path;
-import java.util.Arrays;
-
-import io.reactivex.Flowable;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -13,6 +8,11 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import reactor.core.publisher.Flux;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 @Slf4j
 public class TerraformModuleDirectory {
@@ -38,8 +38,8 @@ public class TerraformModuleDirectory {
         return maybeExitValue.flatMap(exitValue -> exitValue == 0 ? Either.right(stdout.toString()) : Either.left("Error: exitValue = " + exitValue + " :: " + stdout));
     }
 
-    public Flowable<Either<String, String>> executeAsync(String executablePath, String[] arguments) {
-        return Flowable.fromCallable(() -> execute(executablePath, arguments));
+    public Flux<Either<String, String>> executeAsync(String executablePath, String[] arguments) {
+        return Flux.just(execute(executablePath, arguments));
     }
 
     private String operationDescription(String[] arguments) {

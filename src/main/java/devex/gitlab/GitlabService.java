@@ -4,12 +4,12 @@ import io.micronaut.context.annotation.Value;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.reactivex.Flowable;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Singleton;
 import java.util.List;
 import java.util.function.Function;
 
@@ -25,6 +25,7 @@ public class GitlabService {
             response -> response.getHeaders().get(RESPONSE_HEADER_NEXT_PAGE);
     private static final String GROUP_DESCENDANTS_VERSION = "13.5";
     private static final String GROUP_NOT_FOUND = "Group not found";
+
     private final GitlabClient client;
     private final String gitlabUrl;
 
@@ -38,10 +39,12 @@ public class GitlabService {
         if (by == GitlabGroupSearchMode.ID) {
             return getGroup(search);
         } else {
-            Function<Integer, Flowable<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.searchGroups(search, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
-            final Flowable<GitlabGroup> results = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
+            Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.searchGroups(search, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
+            final Flux<GitlabGroup> results = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
             return results.filter(gitlabGroup -> by.groupPredicate(search).test(gitlabGroup))
-                          .map(Either::<String, GitlabGroup>right).blockingFirst(Either.left(GROUP_NOT_FOUND));
+                          .map(Either::<String, GitlabGroup>right)
+                          .defaultIfEmpty(Either.left(GROUP_NOT_FOUND))
+                          .blockFirst();
         }
     }
 
@@ -55,15 +58,16 @@ public class GitlabService {
         }
     }
 
-    public Flowable<GitlabProject> getGitlabGroupProjects(GitlabGroup group) {
+    public Flux<GitlabProject> getGitlabGroupProjects(GitlabGroup group) {
         log.debug("Searching for projects in group '{}'", group.getFullPath());
         final String groupId = group.getId();
-        final Flowable<GitlabProject> projects = getGroupProjects(groupId);
-        final Flowable<GitlabGroup> subGroups = getSubGroups(groupId);
-        return Flowable.mergeDelayError(projects, subGroups.flatMap(subGroup -> getGroupProjects(subGroup.getId())));
+        final Flux<GitlabProject> projects = getGroupProjects(groupId);
+        final Flux<GitlabGroup> subGroups = getSubGroups(groupId);
+        // prefetch = 32 form this SO answer https://stackoverflow.com/a/56737019/2185719
+        return Flux.mergeDelayError(32, projects, subGroups.flatMap(subGroup -> getGroupProjects(subGroup.getId())));
     }
 
-    protected Flowable<GitlabGroup> getSubGroups(String groupId) {
+    protected Flux<GitlabGroup> getSubGroups(String groupId) {
         log.trace("Retrieving sub-groups of '{}'", groupId);
         final Option<GitlabVersion> maybeVersion = getVersion();
         if (maybeVersion.isDefined()) {
@@ -94,20 +98,20 @@ public class GitlabService {
         return Option.none();
     }
 
-    protected Flowable<GitlabGroup> getDescendantGroups(String groupId) {
-        final Function<Integer, Flowable<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.groupDescendants(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
+    protected Flux<GitlabGroup> getDescendantGroups(String groupId) {
+        final Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.groupDescendants(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
         return paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
     }
 
-    protected Flowable<GitlabGroup> getSubGroupsRecursively(String groupId) {
-        final Function<Integer, Flowable<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.groupSubGroups(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
-        final Flowable<GitlabGroup> subGroups = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
-        return subGroups.flatMap(group -> Flowable.just(group).mergeWith(getSubGroupsRecursively(group.getId())));
+    protected Flux<GitlabGroup> getSubGroupsRecursively(String groupId) {
+        final Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.groupSubGroups(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
+        final Flux<GitlabGroup> subGroups = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
+        return subGroups.flatMap(group -> Flux.just(group).mergeWith(getSubGroupsRecursively(group.getId())));
     }
 
-    private Flowable<GitlabProject> getGroupProjects(String groupId) {
+    private Flux<GitlabProject> getGroupProjects(String groupId) {
         log.trace("Retrieving group '{}' projects", groupId);
-        final Function<Integer, Flowable<HttpResponse<List<GitlabProject>>>> apiCall = pageIndex -> client.groupProjects(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
+        final Function<Integer, Flux<HttpResponse<List<GitlabProject>>>> apiCall = pageIndex -> client.groupProjects(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
         return paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
     }
 }
