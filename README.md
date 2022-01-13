@@ -71,14 +71,14 @@ To execute that jar run `java`.
 java -jar build/libs/devex-*-all.jar -h
 ```
 
-To build a GraalVM native binary run the `nativeImage` gradle task.
+To build a GraalVM native binary run the `nativeCompile` gradle task.
 
 ```bash
-GITLAB_TOKEN="..." ./gradlew clean nativeImage
+GITLAB_TOKEN="..." ./gradlew clean nativeCompile
 ```
 
-The binary will be created under `build/native-image/application`. To execute the native binary run it.
+The binary will be created under `build/native/nativeCompile/devex`. To execute the native binary run it.
 
 ```bash
-build/native-image/application -h
+build/native/nativeCompile/devex -h
 ```

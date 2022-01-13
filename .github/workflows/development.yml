@@ -72,8 +72,8 @@ jobs:
         if: always()
         with:
           files: build/test-results/test/*.xml
-      - name: "Gradle nativeImage"
-        run: ./gradlew nativeImage
+      - name: "Gradle nativeCompile"
+        run: ./gradlew nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
