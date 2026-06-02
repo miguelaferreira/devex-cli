@@ -8,7 +8,6 @@ group = "devex"
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 micronaut {
@@ -41,11 +40,8 @@ dependencies {
     implementation 'io.vavr:vavr:0.10.6'
     implementation 'io.vavr:vavr-jackson:0.10.3'
 
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r'
-    implementation('org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:5.11.0.202103091610-r') {
-        exclude module: 'jsch'
-    }
-    implementation 'com.github.miguelaferreira:jsch:replace-tag-jsch-0.1.63-SNAPSHOT'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.6.0.202603022253-r'
 
     implementation 'org.apache.commons:commons-exec:1.6.0'
 
@@ -63,6 +59,7 @@ graalvmNative {
     binaries {
         main {
             buildArgs.addAll(
+                "--initialize-at-build-time=org.apache.sshd",
                 "--initialize-at-build-time=org.slf4j",
                 "--initialize-at-build-time=ch.qos.logback",
                 "--initialize-at-build-time=org.xml.sax",

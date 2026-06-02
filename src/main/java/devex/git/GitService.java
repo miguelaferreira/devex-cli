@@ -9,8 +9,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -20,7 +21,14 @@ import java.util.Objects;
 @Singleton
 public class GitService {
 
-    private static final SshSessionFactory sshSessionFactory = new OverrideJschConfigSessionFactory();
+    private static final SshSessionFactory sshSessionFactory = new SshdSessionFactory();
+
+    static {
+        // Submodule operations use the global default SshSessionFactory rather than
+        // the per-transport callback, so install ours as the default.
+        SshSessionFactory.setInstance(sshSessionFactory);
+    }
+
     public static final String HTTPS_USERNAME = "git";
 
     private GitCloneProtocol cloneProtocol = GitCloneProtocol.SSH;
