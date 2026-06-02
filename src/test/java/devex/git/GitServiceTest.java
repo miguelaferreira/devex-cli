@@ -9,7 +9,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.submodule.SubmoduleStatus;
 import org.eclipse.jgit.submodule.SubmoduleStatusType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -33,6 +35,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void clonePublicRepo_ssh_withSubmodule() throws GitAPIException {
         final GitRepository repository = GitRepository.builder()
                                                       .name("gitlab-clone-example / a-project")
@@ -65,6 +70,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void clonePrivateRepo_ssh_withSubmodule() throws GitAPIException {
         final GitRepository repository = GitRepository.builder()
                                                       .name("gitlab-clone-example / a-private-project")
@@ -94,6 +102,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void clonePublicRepo_ssh_withoutSubmodule() throws GitAPIException {
         final GitRepository repository = GitRepository.builder()
                                                       .name("gitlab-clone-example / a-project")
@@ -109,6 +120,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void testClonePublicRepositories_ssh_freshClone_withSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
         Flux<GitRepository> repositories = Flux.just(
@@ -138,6 +152,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void testCloneOrInitSubmodulesPublicRepos_ssh_existingClone_withSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
         Flux<GitRepository> repositories = Flux.just(
@@ -183,6 +200,9 @@ class GitServiceTest extends TestBase {
     }
 
     @Test
+    @Tag("ssh-integration")
+    @EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+            disabledReason = "SSH integration tests require ssh-agent with unlocked keys; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
     void testCloneOrInitSubmodulesPublicRepos_ssh_existingClone_withoutSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
         Flux<GitRepository> repositories = Flux.just(
