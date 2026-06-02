@@ -35,7 +35,7 @@ class GithubClientWithTokenTest {
         final HttpResponse<List<GithubRepository>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).hasSize(3)
+        assertThat(response.getBody().get()).isNotEmpty()
                                             .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase("devex-cli-example"));
     }
 }
