@@ -42,6 +42,9 @@ dependencies {
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.6.0.202603022253-r'
+    // Enables SSH agent integration (e.g. macOS / ssh-agent) for JGit when users have
+    // `IdentityAgent SSH_AUTH_SOCK` in their ~/.ssh/config; transparently no-op otherwise.
+    runtimeOnly 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache.agent:7.6.0.202603022253-r'
 
     implementation 'org.apache.commons:commons-exec:1.6.0'
 

@@ -10,18 +10,21 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
+import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
 
 import jakarta.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 @Slf4j
 @Singleton
 public class GitService {
 
-    private static final SshSessionFactory sshSessionFactory = new SshdSessionFactory();
+    private static final SshSessionFactory sshSessionFactory = buildSshSessionFactory();
 
     static {
         // Submodule operations use the global default SshSessionFactory rather than
@@ -29,6 +32,41 @@ public class GitService {
         SshSessionFactory.setInstance(sshSessionFactory);
     }
 
+    private static SshSessionFactory buildSshSessionFactory() {
+        return new SshdSessionFactoryBuilder()
+                .setHomeDirectory(new File(System.getProperty("user.home")))
+                .setSshDirectory(Path.of(System.getProperty("user.home"), ".ssh").toFile())
+                .setConfigFile(GitService::sshConfigFile)
+                .withDefaultConnectorFactory()
+                .build(null);
+    }
+
+    private static File sshConfigFile(File sshDir) {
+        // JGit's Apache MINA SSHD only uses the SSH agent when the effective SSH config has an
+        // `IdentityAgent` directive. Generate a wrapper config that adds the directive for all
+        // hosts and includes the user's real config, so passphrase-protected keys held by
+        // ssh-agent work without prompting and tests can run locally.
+        final String authSock = System.getenv("SSH_AUTH_SOCK");
+        if (authSock == null || authSock.isBlank()) {
+            return new File(sshDir, "config");
+        }
+        try {
+            File wrapperConfig = Files.createTempFile("devex-ssh-config", ".cfg").toFile();
+            wrapperConfig.deleteOnExit();
+            File userConfig = new File(sshDir, "config");
+            StringBuilder content = new StringBuilder()
+                    .append("Host *\n")
+                    .append("  IdentityAgent ").append(authSock).append('\n');
+            if (userConfig.isFile()) {
+                content.append("\nInclude ").append(userConfig.getAbsolutePath()).append('\n');
+            }
+            Files.writeString(wrapperConfig.toPath(), content.toString());
+            return wrapperConfig;
+        } catch (IOException e) {
+            log.debug("Could not create SSH config wrapper, falling back to user's config", e);
+            return new File(sshDir, "config");
+        }
+    }
     public static final String HTTPS_USERNAME = "git";
 
     private GitCloneProtocol cloneProtocol = GitCloneProtocol.SSH;
