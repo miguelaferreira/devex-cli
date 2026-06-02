@@ -15,10 +15,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'Increment version')"
     steps:
       - name: "Cache tooling"
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${tooling_dir}
           key: ${{ runner.os }}-devex-git-tag
+
       - name: "Setup tools"
         run: |
           mkdir -p ${tooling_dir}
@@ -28,18 +29,23 @@ jobs:
           cd semver_bash-master
           sudo mv semver.sh bump.sh /bin
           sudo chmod +x /bin/bump.sh
+
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: "Bump version number"
         id: bump
         run: |
           version="$(cat ${version_file})"
           bump.sh "${version}" > ${version_file}
-          echo "::set-output name=version-file::${version_file}"
-          echo "::set-output name=version::${version}"
-          echo "::set-output name=new-version::$(cat ${version_file})"
+          {
+            echo "version-file=${version_file}"
+            echo "version=${version}"
+            echo "new-version=$(cat ${version_file})"
+          } >> "$GITHUB_OUTPUT"
         env:
           version_file: VERSION
+
       - name: "Configure git"
         run: |
           git remote rm origin
@@ -53,12 +59,14 @@ jobs:
         env:
           ssh_config: ${{ secrets.SSH_CONFIG }}
           bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
+
       - name: "Create tag"
         run: |
           git tag "${tag}"
           git push --tags
         env:
           tag: "v${{ steps.bump.outputs.version }}"
+
       - name: "Create bump commit"
         run: |
           git push --set-upstream origin main
@@ -68,5 +76,6 @@ jobs:
         env:
           version_file: ${{ steps.bump.outputs.version-file }}
           commit_message: "Increment version from '${{ steps.bump.outputs.version }}' to '${{ steps.bump.outputs.new-version }}'"
+
       - name: "Clean up"
         run: sudo rm -rf ${ssh_dir}

@@ -14,28 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout sources"
-        uses: actions/checkout@v2
-      - name: "Cache dependencies"
-        uses: actions/cache@v2
+        uses: actions/checkout@v4
+
+      - name: "Set up GraalVM"
+        uses: graalvm/setup-graalvm@v1
         with:
-          path: |
-            ~/.gradle
-            ${GITHUB_WORKSPACE}/.gradle
-            ~/.cache/pip/
-          key: ${{ runner.os }}-devex-development-java16-graal-21.3.0-r17
-      - name: "Install GraalVM"
-        uses: DeLaGuardo/setup-graalvm@4.0
+          java-version: '25'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+
+      - name: "Set up Terraform"
+        uses: hashicorp/setup-terraform@v3
         with:
-          graalvm: '21.3.0'
-          java: 'java17'
-          arch: 'amd64'
-      - name: "Install native-image"
-        run: |
-          gu install native-image
-      - name: "Install Terraform"
-        uses: autero1/action-terraform@v1.0.3
-        with:
-          terraform_version: 1.0.8
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+
       - name: "Setup SSH"
         run: |
           mkdir -p ~/.ssh
@@ -55,48 +49,40 @@ jobs:
         env:
           bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
           bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
+
       - name: "Gradle build"
         run: ./gradlew build
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
+          DEVEX_SSH_INTEGRATION_TESTS: "true"
+
       - name: "Upload Test Reports"
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-reports
           path: build/reports/tests
           retention-days: 5
+
       - name: "Publish Unit Test Results"
-        uses: EnricoMi/publish-unit-test-result-action/composite@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: build/test-results/test/*.xml
-      - name: "Create native-image build config"
-        run: |
-          .github/scripts/create-native-image-build-config.sh
-          .github/scripts/merge-native-image-build-config.sh linux
+
+      - name: "Build native image"
+        run: ./gradlew nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
-      - name: "Gradle nativeImage"
-        run: ./gradlew nativeImage
-        env:
-          GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
-          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
+
       - name: "Run and test native binary"
         run: .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
-      - uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
-        with:
-          add: "src/main/resources/META-INF/native-image"
-          author_name: "DevEx Bot"
-          author_email: "devex.bot@gmail.com"
-          default_author: "user_info"
-          message: "Update native-image build config"
-          branch: ${{ github.head_ref }}
+
       - name: "Clean up"
         if: ${{ always() }}
         run: sudo rm -rf ~/.ssh
