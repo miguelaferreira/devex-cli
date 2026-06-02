@@ -8,7 +8,7 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.retry.annotation.Retryable;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +24,5 @@ public interface GithubClient {
     Optional<GithubOrganization> getOrganization(@PathVariable String org);
 
     @Get(value = "/orgs/{org}/repos{?page}")
-    Flowable<HttpResponse<List<GithubRepository>>> getOrganizationRepositories(@PathVariable String org, @QueryValue int page);
+    Flux<HttpResponse<List<GithubRepository>>> getOrganizationRepositories(@PathVariable String org, @QueryValue int page);
 }

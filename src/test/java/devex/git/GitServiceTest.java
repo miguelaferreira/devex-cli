@@ -1,7 +1,7 @@
 package devex.git;
 
 import devex.TestBase;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import org.eclipse.jgit.api.Git;
@@ -111,7 +111,7 @@ class GitServiceTest extends TestBase {
     @Test
     void testClonePublicRepositories_ssh_freshClone_withSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
-        Flowable<GitRepository> repositories = Flowable.just(
+        Flux<GitRepository> repositories = Flux.just(
                 GitRepository.builder()
                              .name("gitlab-clone-example / a-project")
                              .path("gitlab-clone-example/a-project")
@@ -140,7 +140,7 @@ class GitServiceTest extends TestBase {
     @Test
     void testCloneOrInitSubmodulesPublicRepos_ssh_existingClone_withSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
-        Flowable<GitRepository> repositories = Flowable.just(
+        Flux<GitRepository> repositories = Flux.just(
                 GitRepository.builder()
                              .name("gitlab-clone-example / a-project")
                              .path("gitlab-clone-example/a-project")
@@ -158,7 +158,7 @@ class GitServiceTest extends TestBase {
                              .build()
         );
         // create first clone with only one repo, without submodules
-        final GitRepository firstRepository = repositories.blockingFirst();
+        final GitRepository firstRepository = repositories.blockFirst();
         final Git existingClone = gitService.clone(firstRepository, cloneDirectoryPath, true);
         assertThat(existingClone).isNotNull();
         assertThat(existingClone.submoduleStatus().call()).containsKey("some-project-sub-module")
@@ -185,7 +185,7 @@ class GitServiceTest extends TestBase {
     @Test
     void testCloneOrInitSubmodulesPublicRepos_ssh_existingClone_withoutSubmodules() throws GitAPIException {
         final GitService gitService = new GitService();
-        Flowable<GitRepository> repositories = Flowable.just(
+        Flux<GitRepository> repositories = Flux.just(
                 GitRepository.builder()
                              .name("gitlab-clone-example / a-project")
                              .path("gitlab-clone-example/a-project")
@@ -203,7 +203,7 @@ class GitServiceTest extends TestBase {
                              .build()
         );
         // create first clone with only one repo
-        final GitRepository firstRepository = repositories.blockingFirst();
+        final GitRepository firstRepository = repositories.blockFirst();
         final Git existingClone = gitService.clone(firstRepository, cloneDirectoryPath, false);
         assertThat(existingClone).isNotNull();
         assertThat(existingClone.submoduleStatus().call()).containsKey("some-project-sub-module")
@@ -227,8 +227,8 @@ class GitServiceTest extends TestBase {
         assertThat(submoduleStatus).allSatisfy(subModules -> assertThat(subModules).allSatisfy(this::submoduleIsInitialized));
     }
 
-    private <T> Stream<T> flowableToStream(Flowable<T> gits) {
-        return Stream.ofAll(gits.blockingIterable());
+    private <T> Stream<T> flowableToStream(Flux<T> gits) {
+        return Stream.ofAll(gits.toIterable());
     }
 
     private void submoduleIsInitialized(String name, SubmoduleStatus status) {

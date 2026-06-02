@@ -1,7 +1,7 @@
 package devex.terraform;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,7 +57,7 @@ class TerraformStateServiceTest {
     @Test
     void pullStateFileAsync_success() {
         final Either<String, TerraformStateFile> maybeState = terraformStateService.pullStateFileAsync(DIRECTORY)
-                                                                                   .blockingFirst();
+                                                                                   .blockFirst();
 
         VavrAssertions.assertThat(maybeState)
                       .hasRightValueSatisfying(
@@ -95,7 +95,7 @@ class TerraformStateServiceTest {
     @Test
     void listSecretsAsync_success() {
         final Either<String, Stream<String>> maybeSecretsList = terraformStateService.listSecretsAsync(DIRECTORY)
-                                                                                     .blockingFirst();
+                                                                                     .blockFirst();
 
         VavrAssertions.assertThat(maybeSecretsList)
                       .hasRightValueSatisfying(
@@ -119,12 +119,12 @@ class TerraformStateServiceTest {
 
     @Test
     void taintSecretsAsync_success() {
-        final Either<String, Flowable<Either<String, String>>> maybeSecretsList = terraformStateService.taintSecretsAsync(DIRECTORY)
-                                                                                                       .blockingFirst();
+        final Either<String, Flux<Either<String, String>>> maybeSecretsList = terraformStateService.taintSecretsAsync(DIRECTORY)
+                                                                                                       .blockFirst();
 
         VavrAssertions.assertThat(maybeSecretsList)
                       .hasRightValueSatisfying(
-                              secretsList -> assertThat(secretsList.blockingIterable())
+                              secretsList -> assertThat(secretsList.toIterable())
                                       .isNotEmpty()
                                       .hasSize(2)
                       );

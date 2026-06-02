@@ -8,7 +8,7 @@ import devex.github.GithubOrganization;
 import devex.github.GithubRepository;
 import devex.github.GithubService;
 import io.micronaut.context.annotation.Value;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
@@ -17,7 +17,7 @@ import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Slf4j
 @Command(
@@ -96,7 +96,7 @@ public class GithubCloneCommand implements Runnable {
         final GithubOrganization organization = maybeOrganization.get();
         log.debug("Found organization = {}", organization);
 
-        final Flowable<Tuple2<GithubRepository, Either<Throwable, Git>>> clonedRepositories =
+        final Flux<Tuple2<GithubRepository, Either<Throwable, Git>>> clonedRepositories =
                 githubService.getOrganizationRepositories(organization.getName())
                              .map(repository -> Tuple.of(repository, buildGitRepository(repository)))
                              .map(tuple -> tuple.map2(
@@ -106,7 +106,7 @@ public class GithubCloneCommand implements Runnable {
                                      )
                              );
 
-        clonedRepositories.blockingIterable()
+        clonedRepositories.toIterable()
                           .forEach(tuple -> {
                               final GithubRepository repository = tuple._1;
                               final Either<Throwable, Git> gitRepoOrError = tuple._2;

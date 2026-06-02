@@ -3,10 +3,10 @@ package devex.github;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,9 +22,9 @@ class GithubServiceTest {
     )
     void getOrganizationRepositories() {
         try {
-            final Flowable<GithubRepository> repositories = service.getOrganizationRepositories("kubernetes");
+            final Flux<GithubRepository> repositories = service.getOrganizationRepositories("kubernetes");
 
-            final Iterable<GithubRepository> iterable = repositories.blockingIterable();
+            final Iterable<GithubRepository> iterable = repositories.toIterable();
             assertThat(iterable).hasSize(74);
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);

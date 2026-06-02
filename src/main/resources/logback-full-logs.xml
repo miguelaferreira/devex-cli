@@ -7,8 +7,8 @@
                 io.netty.channel.AbstractChannelHandlerContext,
                 io.micronaut.http.netty.stream.HttpStreamsClientHandler,
                 io.micronaut.http.netty.stream.HttpStreamsHandler,
-                io.reactivex.Flowable,
-                io.reactivex.internal.operators.flowable.FlowableMap}
+                reactor.core.publisher.Flux,
+                reactor.core.publisher.FluxMap}
             </pattern>
         </encoder>
     </appender>

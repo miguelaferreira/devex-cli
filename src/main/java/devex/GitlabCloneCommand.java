@@ -8,7 +8,7 @@ import devex.gitlab.GitlabGroupSearchMode;
 import devex.gitlab.GitlabProject;
 import devex.gitlab.GitlabService;
 import io.micronaut.context.annotation.Value;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
@@ -17,7 +17,7 @@ import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Slf4j
 @Command(
@@ -105,7 +105,7 @@ public class GitlabCloneCommand implements Runnable {
         final GitlabGroup group = maybeGroup.get();
         log.debug("Found group = {}", group);
 
-        final Flowable<Tuple2<GitlabProject, Either<Throwable, Git>>> clonedProjects =
+        final Flux<Tuple2<GitlabProject, Either<Throwable, Git>>> clonedProjects =
                 gitlabService.getGitlabGroupProjects(group)
                              .map(project -> Tuple.of(project, buildGitRepository(project)))
                              .map(tuple -> tuple.map2(
@@ -115,7 +115,7 @@ public class GitlabCloneCommand implements Runnable {
                                      )
                              );
 
-        clonedProjects.blockingIterable()
+        clonedProjects.toIterable()
                       .forEach(tuple -> {
                           final GitlabProject project = tuple._1;
                           final Either<Throwable, Git> gitRepoOrError = tuple._2;
