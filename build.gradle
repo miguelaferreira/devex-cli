@@ -56,6 +56,11 @@ dependencies {
 
 application {
     mainClass = "devex.DevexCommand"
+    // JNA (pulled in by Apache MINA SSHD for the SSH-agent Unix-socket connector)
+    // calls System.load on its native dispatcher. Without this flag, JDK 24+ logs
+    // a "restricted method" warning and threatens to block the call in a future
+    // release. Granting native access to the unnamed module silences it.
+    applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
 
 graalvmNative {
