@@ -19,6 +19,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
@@ -41,32 +42,60 @@ public class GitService {
                 .build(null);
     }
 
+    static final String STRIPPED_LINE_PREFIX = "# (devex) stripped for MINA SSHD compatibility: ";
+
+    // `IdentityFile <path>.pub` is OpenSSH's idiom for "ask the agent for the key
+    // matching this public key" (used heavily with 1Password / hardware tokens).
+    // MINA SSHD can't read it: it tries to parse the .pub as a private key and
+    // bails, then — combined with `IdentitiesOnly yes` — refuses to fall back to
+    // the agent. Strip both directives in a temp wrapper so the agent path stays
+    // open while the rest of the user's config (IdentityAgent, HostName, etc.)
+    // is honored unchanged.
+    private static final Pattern IDENTITY_FILE_PUB = Pattern.compile(
+            "^\\s*IdentityFile\\s+(?:\\S+\\.pub|\"[^\"]*\\.pub\")\\s*$",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern IDENTITIES_ONLY_YES = Pattern.compile(
+            "^\\s*IdentitiesOnly\\s+yes\\s*$",
+            Pattern.CASE_INSENSITIVE);
+
     private static File sshConfigFile(File sshDir) {
-        // JGit's Apache MINA SSHD only uses the SSH agent when the effective SSH config has an
-        // `IdentityAgent` directive. Generate a wrapper config that adds the directive for all
-        // hosts and includes the user's real config, so passphrase-protected keys held by
-        // ssh-agent work without prompting and tests can run locally.
-        final String authSock = System.getenv("SSH_AUTH_SOCK");
-        if (authSock == null || authSock.isBlank()) {
-            return new File(sshDir, "config");
+        final File userConfig = new File(sshDir, "config");
+        if (!userConfig.isFile()) {
+            return userConfig;
         }
         try {
-            File wrapperConfig = Files.createTempFile("devex-ssh-config", ".cfg").toFile();
-            wrapperConfig.deleteOnExit();
-            File userConfig = new File(sshDir, "config");
-            StringBuilder content = new StringBuilder()
-                    .append("Host *\n")
-                    .append("  IdentityAgent ").append(authSock).append('\n');
-            if (userConfig.isFile()) {
-                content.append("\nInclude ").append(userConfig.getAbsolutePath()).append('\n');
+            final String original = Files.readString(userConfig.toPath());
+            final String filtered = filterIncompatibleDirectives(original);
+            if (filtered.equals(original)) {
+                return userConfig;
             }
-            Files.writeString(wrapperConfig.toPath(), content.toString());
-            return wrapperConfig;
+            final File tempConfig = Files.createTempFile("devex-ssh-config", ".cfg").toFile();
+            tempConfig.deleteOnExit();
+            Files.writeString(tempConfig.toPath(), filtered);
+            return tempConfig;
         } catch (IOException e) {
-            log.debug("Could not create SSH config wrapper, falling back to user's config", e);
-            return new File(sshDir, "config");
+            log.debug("Could not write filtered SSH config wrapper, falling back to user's config", e);
+            return userConfig;
         }
     }
+
+    static String filterIncompatibleDirectives(String content) {
+        final String[] lines = content.split("\n", -1);
+        final StringBuilder out = new StringBuilder(content.length() + lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            final String line = lines[i];
+            if (IDENTITY_FILE_PUB.matcher(line).matches() || IDENTITIES_ONLY_YES.matcher(line).matches()) {
+                out.append(STRIPPED_LINE_PREFIX).append(line);
+            } else {
+                out.append(line);
+            }
+            if (i < lines.length - 1) {
+                out.append('\n');
+            }
+        }
+        return out.toString();
+    }
+
     public static final String HTTPS_USERNAME = "git";
 
     private GitCloneProtocol cloneProtocol = GitCloneProtocol.SSH;
