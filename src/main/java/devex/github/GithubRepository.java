@@ -1,12 +1,11 @@
 package devex.github;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.ToString;
 
 @ToString
-@Introspected
+@Serdeable
 public class GithubRepository {
     private String id;
     private String name;
@@ -17,7 +16,6 @@ public class GithubRepository {
     @JsonProperty("clone_url")
     private String httpsUrl;
 
-    @JsonCreator
     public GithubRepository() {
     }
 

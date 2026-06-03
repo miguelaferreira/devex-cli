@@ -1,20 +1,18 @@
 package devex.gitlab;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.util.VersionUtil;
-import io.micronaut.core.annotation.Introspected;
+import tools.jackson.core.Version;
+import tools.jackson.core.util.VersionUtil;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Introspected
+@Serdeable
 @Data
 @AllArgsConstructor
 public class GitlabVersion {
     String version;
     String revision;
 
-    @JsonCreator
     public GitlabVersion() {
     }
 
