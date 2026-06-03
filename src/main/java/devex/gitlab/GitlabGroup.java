@@ -1,11 +1,10 @@
 package devex.gitlab;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.ToString;
 
-@Introspected
+@Serdeable
 @ToString
 public class GitlabGroup {
     private String id;
@@ -14,7 +13,6 @@ public class GitlabGroup {
     @JsonProperty("full_path")
     String fullPath;
 
-    @JsonCreator
     public GitlabGroup() {
     }
 

@@ -1,11 +1,10 @@
 package devex.github;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.ToString;
 
-@Introspected
+@Serdeable
 @ToString
 public class GithubOrganization {
     @JsonProperty("login")
@@ -14,7 +13,6 @@ public class GithubOrganization {
     @JsonProperty("repos_url")
     private String reposUrl;
 
-    @JsonCreator
     public GithubOrganization() {
     }
 

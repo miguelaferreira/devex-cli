@@ -11,7 +11,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -82,19 +82,18 @@ public class DevexCommand {
     LoggingSystem loggingSystem;
 
     static int execute(String[] args) {
-        final ApplicationContext ctx = ApplicationContext.builder(GitlabCloneCommand.class, Environment.CLI).start();
-        return execute(ctx, args);
+        try (ApplicationContext ctx = ApplicationContext.builder(GitlabCloneCommand.class, Environment.CLI).start()) {
+            return execute(ctx, args);
+        }
     }
 
     public static int execute(ApplicationContext ctx, String[] args) {
-        try (ctx) {
-            final DevexCommand app = ctx.getBean(DevexCommand.class);
-            return new CommandLine(app, new MicronautFactory(ctx))
-                    .setCaseInsensitiveEnumValuesAllowed(true)
-                    .setAbbreviatedOptionsAllowed(true)
-                    .setExecutionStrategy(app::executionStrategy)
-                    .execute(args);
-        }
+        final DevexCommand app = ctx.getBean(DevexCommand.class);
+        return new CommandLine(app, new MicronautFactory(ctx))
+                .setCaseInsensitiveEnumValuesAllowed(true)
+                .setAbbreviatedOptionsAllowed(true)
+                .setExecutionStrategy(app::executionStrategy)
+                .execute(args);
     }
 
     public static void main(String[] args) {

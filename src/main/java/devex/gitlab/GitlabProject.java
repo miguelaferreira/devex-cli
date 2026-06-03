@@ -1,13 +1,12 @@
 package devex.gitlab;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.ToString;
 
-@Introspected
+@Serdeable
 @Builder
 @AllArgsConstructor
 @ToString
@@ -24,7 +23,6 @@ public class GitlabProject {
     @JsonProperty("http_url_to_repo")
     String httpUrlToRepo;
 
-    @JsonCreator
     public GitlabProject() {
     }
 

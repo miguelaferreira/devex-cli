@@ -1,9 +1,9 @@
 package devex.terraform;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import io.micronaut.context.annotation.Value;
-import io.reactivex.Flowable;
+import reactor.core.publisher.Flux;
 import io.vavr.control.Either;
 
 @Singleton
@@ -18,7 +18,7 @@ public class TerraformCommand {
         return directory.execute(executablePath, arguments);
     }
 
-    public Flowable<Either<String, String>> executeAsync(TerraformModuleDirectory directory, String[] arguments) {
+    public Flux<Either<String, String>> executeAsync(TerraformModuleDirectory directory, String[] arguments) {
         return directory.executeAsync(executablePath, arguments);
     }
 }

@@ -3,12 +3,13 @@ package devex.terraform;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
-import io.vavr.collection.List;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.ToString;
 
+import java.util.List;
+
 @ToString
-@Introspected
+@Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TerraformState {
 
@@ -33,15 +34,18 @@ public class TerraformState {
     }
 
     @ToString
-    @Introspected
+    @Serdeable
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class TerraformResource {
+    static class TerraformResource {
 
         @JsonIgnore
         private String module = "";
-        private ResourceMode mode;
+        private String mode;
         private String type;
         private String name;
+
+        public TerraformResource() {
+        }
 
         public String getModule() {
             return module;
@@ -51,11 +55,11 @@ public class TerraformState {
             this.module = module;
         }
 
-        public ResourceMode getMode() {
+        public String getMode() {
             return mode;
         }
 
-        public void setMode(ResourceMode mode) {
+        public void setMode(String mode) {
             this.mode = mode;
         }
 
@@ -75,6 +79,4 @@ public class TerraformState {
             this.name = name;
         }
     }
-
-    private static enum ResourceMode {DATA, MANAGED}
 }

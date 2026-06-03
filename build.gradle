@@ -1,7 +1,6 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.micronaut.application") version "2.0.3"
-    id("org.javamodularity.moduleplugin") version "1.8.10"
+    id("io.micronaut.application") version "5.0.0"
+    id("io.micronaut.aot") version "5.0.0"
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -9,10 +8,10 @@ group = "devex"
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 micronaut {
+    version "5.0.1"
     testRuntime("junit5")
     processing {
         incremental(true)
@@ -21,99 +20,75 @@ micronaut {
 }
 
 dependencies {
-    // patch vulnerable dependencies
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.10.7")
-    implementation("io.netty:netty-codec:4.1.68.Final")
-
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.46'
+    annotationProcessor 'org.projectlombok:lombok:1.18.46'
 
     annotationProcessor("info.picocli:picocli-codegen")
     implementation("info.picocli:picocli")
-    implementation("io.micronaut:micronaut-http-client") {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-        exclude group: 'io.netty', module: 'netty-codec'
-    }
-    implementation("io.micronaut:micronaut-runtime") {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    implementation("io.micronaut.picocli:micronaut-picocli") {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
+    implementation("io.micronaut.picocli:micronaut-picocli")
 
-    implementation("io.micronaut:micronaut-validation")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.reactor:micronaut-reactor")
+    implementation("io.micronaut.reactor:micronaut-reactor-http-client")
 
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation("io.micronaut.validation:micronaut-validation")
 
+    implementation 'ch.qos.logback:logback-classic'
+    runtimeOnly 'org.yaml:snakeyaml'
 
-    implementation 'io.vavr:vavr:0.10.3'
-    implementation("io.vavr:vavr-jackson:0.10.3") {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
+    implementation 'io.vavr:vavr:0.10.6'
 
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r'
-    implementation('org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:5.11.0.202103091610-r') {
-        exclude module: 'jsch'
-    }
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.6.0.202603022253-r'
+    // Enables SSH agent integration (e.g. macOS / ssh-agent) for JGit when users have
+    // `IdentityAgent SSH_AUTH_SOCK` in their ~/.ssh/config; transparently no-op otherwise.
+    runtimeOnly 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache.agent:7.6.0.202603022253-r'
 
-// original dependency was a multi-version jar and the classes for Java15 were no loading
-//    implementation 'com.github.mwiede:jsch:0.1.62'
-    implementation 'com.github.miguelaferreira:jsch:replace-tag-jsch-0.1.63-SNAPSHOT'
+    implementation 'org.apache.commons:commons-exec:1.6.0'
 
-    implementation 'org.apache.commons:commons-exec:1.3'
-
-    // Test dependencies
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testImplementation 'org.assertj:assertj-core:3.11.1'
-    testImplementation 'org.assertj:assertj-vavr:0.4.1'
-
-    testImplementation("org.junit.jupiter:junit-jupiter-engine") // make gradle compileTestJava work
+    testCompileOnly 'org.projectlombok:lombok:1.18.46'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation 'org.assertj:assertj-vavr:0.5.1'
 }
 
 application {
-    mainClass.set("devex.DevexCommand")
+    mainClass = "devex.DevexCommand"
+    // JNA (pulled in by Apache MINA SSHD for the SSH-agent Unix-socket connector)
+    // calls System.load on its native dispatcher. Without this flag, JDK 24+ logs
+    // a "restricted method" warning and threatens to block the call in a future
+    // release. Granting native access to the unnamed module silences it.
+    applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
+}
+
+graalvmNative {
+    binaries {
+        main {
+            buildArgs.addAll(
+                "--initialize-at-build-time=org.apache.sshd",
+                "--initialize-at-build-time=org.slf4j",
+                "--initialize-at-build-time=ch.qos.logback",
+                "--initialize-at-build-time=org.xml.sax",
+                "-H:+UnlockExperimentalVMOptions",
+                "--enable-url-protocols=http,https"
+            )
+        }
+    }
 }
 
 java {
-    modularity.inferModulePath.set(true)
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.toVersion("25")
+    targetCompatibility = JavaVersion.toVersion("25")
 }
 
-test {
-    environment "GITLAB_TOKEN", System.getenv('GITLAB_TOKEN')
-    environment "GITHUB_TOKEN", System.getenv('GITHUB_TOKEN')
-
-    moduleOptions {
-        runOnClasspath = true
-    }
-
-//    // To trouble shoot failed tests in CI workflows:
-//    // - uncomment the block bellow
-//    // - set '--info' in the gradle build step of the workflow
-//    testLogging {
-//        // set options for log level LIFECYCLE
-//        events "failed"
-//        exceptionFormat "short"
-//
-//        info.showStandardStreams = true
-//    }
-}
-
-// Workaround for using gradle 7.3 with java 17
-// src: https://github.com/micronaut-projects/micronaut-gradle-plugin/issues/296
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    environment "GITLAB_TOKEN", System.getenv('GITLAB_TOKEN') ?: ''
+    environment "GITHUB_TOKEN", System.getenv('GITHUB_TOKEN') ?: ''
 }
 
 processResources {
     from("VERSION")
 }
-
-modularity.patchModule('java.annotation', 'jsr305-3.0.2.jar')
-modularity.patchModule('org.eclipse.jgit', 'org.eclipse.jgit.ssh.jsch-5.11.0.202103091610-r.jar')
-modularity.patchModule('io.micronaut.runtime', "micronaut-context-${ext.micronautVersion}.jar")
-
-mainClassName = "$moduleName/devex.DevexCommand"

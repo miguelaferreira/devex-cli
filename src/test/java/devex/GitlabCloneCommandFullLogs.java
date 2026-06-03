@@ -1,12 +1,17 @@
 package devex;
 
 import io.micronaut.context.ApplicationContext;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+@Tag("ssh-integration")
+@EnabledIfEnvironmentVariable(named = "DEVEX_SSH_INTEGRATION_TESTS", matches = "true",
+        disabledReason = "Clone tests use the SSH protocol; set DEVEX_SSH_INTEGRATION_TESTS=true to run.")
 public class GitlabCloneCommandFullLogs extends GitlabCloneCommandBase {
 
     @TempDir
