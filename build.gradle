@@ -64,10 +64,17 @@ application {
 }
 
 graalvmNative {
+    metadataRepository {
+        enabled = true
+    }
     binaries {
         main {
             buildArgs.addAll(
                 "--initialize-at-build-time=org.apache.sshd",
+                // MontgomeryCurve eagerly builds XDH key-pair generators (holding a
+                // SecureRandom) in its enum constructor; that live crypto state can't be
+                // baked into the image heap, so initialize it at run time.
+                "--initialize-at-run-time=org.apache.sshd.common.kex.MontgomeryCurve",
                 "--initialize-at-build-time=org.slf4j",
                 "--initialize-at-build-time=ch.qos.logback",
                 "--initialize-at-build-time=org.xml.sax",
