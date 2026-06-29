@@ -8,15 +8,20 @@ on:
 jobs:
   build_release:
     name: "Build release"
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        include:
+          - { runner: ubuntu-latest,    os: Linux, arch: amd64 }
+          - { runner: ubuntu-24.04-arm, os: Linux, arch: arm64 }
+          - { runner: macos-13,         os: macOS, arch: amd64 }
+          - { runner: macos-latest,     os: macOS, arch: arm64 }
     steps:
-      - name: "[${{ runner.os }}] Checkout sources"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Checkout sources"
         uses: actions/checkout@v4
 
-      - name: "[${{ runner.os }}] Set up GraalVM"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Set up GraalVM"
         uses: graalvm/setup-graalvm@v1
         with:
           java-version: '25'
@@ -24,42 +29,53 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
 
-      - name: "[${{ runner.os }}] Set up Terraform"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Set up Terraform"
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
           terraform_wrapper: false
 
-      - name: "[${{ runner.os }}] Setup SSH"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Setup SSH"
         run: |
           mkdir -p ~/.ssh
           cat .github/files/known_hosts > ~/.ssh/known_hosts
-          echo "${bot_devex_ssh_private_key}" > ~/.ssh/id_rsa
+          echo "${bot_devex_ssh_private_key_rsa}" > ~/.ssh/id_rsa
+          echo "${bot_devex_ssh_private_key_ed25519}" > ~/.ssh/id_ed25519
+
+          cat << EOF > ~/.ssh/config
+          Host gitlab.com
+            IdentityFile ~/.ssh/id_ed25519
+
+          Host github.com
+            IdentityFile ~/.ssh/id_rsa
+          EOF
+
           chmod -R 500 ~/.ssh
         env:
-          bot_devex_ssh_private_key: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
+          bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
+          bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
 
-      - name: "[${{ runner.os }}] Gradle build"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Gradle build"
         run: ./gradlew build nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
           DEVEX_SSH_INTEGRATION_TESTS: "true"
 
-      - name: "[${{ runner.os }}] Run and test native image"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Run and test native image"
         run: .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
 
-      - name: "[${{ runner.os }}] Clean up"
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Clean up"
         if: ${{ always() }}
         run: sudo rm -rf ~/.ssh
 
-      - name: '[${{ runner.os }}] Upload artifacts'
+      - name: '[${{ matrix.os }}-${{ matrix.arch }}] Upload artifacts'
         uses: actions/upload-artifact@v4
         with:
-          name: devex-${{ runner.os }}
+          name: devex-${{ matrix.os }}-${{ matrix.arch }}
           path: build/native/nativeCompile/devex
           if-no-files-found: error
 
