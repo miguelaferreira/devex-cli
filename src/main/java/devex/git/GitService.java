@@ -6,24 +6,49 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.internal.transport.sshd.OpenSshServerKeyDatabase;
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.sshd.ServerKeyDatabase;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
+
+import net.i2p.crypto.eddsa.EdDSASecurityProvider;
 
 import jakarta.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.PublicKey;
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
 public class GitService {
+
+    static {
+        // Apache MINA SSHD parses ssh-ed25519 keys (host keys and known_hosts entries)
+        // by building them through java.security with the EdDSA provider. In the GraalVM
+        // native image that provider isn't registered at run time, so every ssh-ed25519
+        // known_hosts line is rejected as "invalid" and hosts that present an Ed25519 host
+        // key (e.g. github.com) fall back to other algorithms and fail host-key validation.
+        // Register it explicitly, before the session factory is built below (the factory
+        // reads known_hosts lazily, but registering first keeps Ed25519 available from the
+        // very first connection). Harmless on the JVM, where MINA registers it itself.
+        if (Security.getProvider(EdDSASecurityProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new EdDSASecurityProvider());
+        }
+    }
 
     private static final SshSessionFactory sshSessionFactory = buildSshSessionFactory();
 
@@ -38,8 +63,53 @@ public class GitService {
                 .setHomeDirectory(new File(System.getProperty("user.home")))
                 .setSshDirectory(Path.of(System.getProperty("user.home"), ".ssh").toFile())
                 .setConfigFile(GitService::sshConfigFile)
+                .setServerKeyDatabase(GitService::preferStrongHostKeys)
                 .withDefaultConnectorFactory()
                 .build(null);
+    }
+
+    // Rank host-key algorithms strongest-first; lower is preferred.
+    private static int hostKeyAlgorithmRank(String algorithm) {
+        final String algo = algorithm == null ? "" : algorithm.toLowerCase();
+        if (algo.contains("eddsa") || algo.contains("ed25519")) {
+            return 0;
+        }
+        if (algo.contains("ec")) { // ECDSA
+            return 1;
+        }
+        if (algo.contains("rsa")) {
+            return 2;
+        }
+        return 3;
+    }
+
+    // JGit proposes host-key algorithms in the order the server-key database returns
+    // the known keys for a host, and the default database's order isn't stable. When a
+    // host has several known_hosts entries of different types (e.g. github.com, for which
+    // many users have both a current ssh-ed25519 entry and a stale pre-2023 ssh-rsa one),
+    // a weaker/stale type can win negotiation and host-key validation fails with "Server
+    // key did not validate". Sort the looked-up keys strongest-first so the proposal is
+    // deterministic and prefers the strongest key the user actually trusts for that host
+    // — mirroring OpenSSH, and without affecting hosts that only have one key type.
+    private static ServerKeyDatabase preferStrongHostKeys(File homeDir, File sshDir) {
+        final List<Path> knownHostsFiles = List.of(
+                new File(sshDir, "known_hosts").toPath(),
+                new File(sshDir, "known_hosts2").toPath());
+        final ServerKeyDatabase delegate = new OpenSshServerKeyDatabase(true, knownHostsFiles);
+        return new ServerKeyDatabase() {
+            @Override
+            public List<PublicKey> lookup(String connectAddress, InetSocketAddress remoteAddress, Configuration config) {
+                final List<PublicKey> keys = new ArrayList<>(delegate.lookup(connectAddress, remoteAddress, config));
+                keys.sort(Comparator.comparingInt(key -> hostKeyAlgorithmRank(key.getAlgorithm())));
+                return keys;
+            }
+
+            @Override
+            public boolean accept(String connectAddress, InetSocketAddress remoteAddress, PublicKey serverKey,
+                                  Configuration config, CredentialsProvider provider) {
+                return delegate.accept(connectAddress, remoteAddress, serverKey, config, provider);
+            }
+        };
     }
 
     static final String STRIPPED_LINE_PREFIX = "# (devex) stripped for MINA SSHD compatibility: ";

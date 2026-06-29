@@ -1,6 +1,8 @@
 plugins {
     id("io.micronaut.application") version "5.0.0"
     id("io.micronaut.aot") version "5.0.0"
+    id "com.gradleup.shadow" version "9.4.2"
+
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -42,6 +44,13 @@ dependencies {
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.6.0.202603022253-r'
+    // Apache MINA SSHD only handles Ed25519 (ssh-ed25519) keys when this EdDSA
+    // provider is on the classpath; without it MINA silently skips ed25519
+    // known_hosts entries and host keys, so hosts that present an Ed25519 key
+    // (e.g. github.com, whose preferred host key is ed25519) fail host-key
+    // validation. GitService registers the provider so it also works in the
+    // native image, where MINA doesn't register it at run time. Required for SSH.
+    implementation 'net.i2p.crypto:eddsa:0.3.0'
     // Enables SSH agent integration (e.g. macOS / ssh-agent) for JGit when users have
     // `IdentityAgent SSH_AUTH_SOCK` in their ~/.ssh/config; transparently no-op otherwise.
     runtimeOnly 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache.agent:7.6.0.202603022253-r'
@@ -63,16 +72,41 @@ application {
     applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
 
+// `applicationDefaultJvmArgs` only reaches the generated start scripts, not
+// `java -jar`. Set the manifest attribute so executable jars grant native
+// access to the unnamed module too, silencing the same JNA System.load warning.
+tasks.withType(Jar).configureEach {
+    manifest {
+        attributes("Enable-Native-Access": "ALL-UNNAMED")
+    }
+}
+
 graalvmNative {
+    metadataRepository {
+        enabled = true
+    }
     binaries {
         main {
             buildArgs.addAll(
                 "--initialize-at-build-time=org.apache.sshd",
+                // MontgomeryCurve eagerly builds XDH key-pair generators (holding a
+                // SecureRandom) in its enum constructor; that live crypto state can't be
+                // baked into the image heap, so initialize it at run time.
+                "--initialize-at-run-time=org.apache.sshd.common.kex.MontgomeryCurve",
+                // The EdDSA provider (ed25519 support for SSH) is a java.security.Provider;
+                // native-image requires security providers to be initialized at build time.
+                // GitService also registers it with java.security.Security at run time so the
+                // ssh-ed25519 known_hosts decoder can build keys via KeyFactory in the image.
+                "--initialize-at-build-time=net.i2p.crypto.eddsa",
                 "--initialize-at-build-time=org.slf4j",
                 "--initialize-at-build-time=ch.qos.logback",
                 "--initialize-at-build-time=org.xml.sax",
                 "-H:+UnlockExperimentalVMOptions",
-                "--enable-url-protocols=http,https"
+                "--enable-url-protocols=http,https",
+                // JNA (via MINA SSHD's SSH-agent connector) calls System.load, a
+                // restricted method under JDK 24+. Bake native access for the unnamed
+                // module into the image so it doesn't print a "restricted method" warning.
+                "--enable-native-access=ALL-UNNAMED"
             )
         }
     }
