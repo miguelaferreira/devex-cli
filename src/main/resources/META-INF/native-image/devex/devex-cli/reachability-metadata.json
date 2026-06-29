@@ -8715,6 +8715,33 @@
           "org.eclipse.jgit.internal.transport.sshd.agent.connector.UnixSockets"
         ]
       }
+    },
+    {
+      "type": "net.i2p.crypto.eddsa.EdDSAEngine",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "net.i2p.crypto.eddsa.EdDSASecurityProvider",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "net.i2p.crypto.eddsa.KeyFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     }
   ],
   "resources": [
