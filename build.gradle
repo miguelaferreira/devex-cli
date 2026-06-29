@@ -72,6 +72,15 @@ application {
     applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
 
+// `applicationDefaultJvmArgs` only reaches the generated start scripts, not
+// `java -jar`. Set the manifest attribute so executable jars grant native
+// access to the unnamed module too, silencing the same JNA System.load warning.
+tasks.withType(Jar).configureEach {
+    manifest {
+        attributes("Enable-Native-Access": "ALL-UNNAMED")
+    }
+}
+
 graalvmNative {
     metadataRepository {
         enabled = true
@@ -93,7 +102,11 @@ graalvmNative {
                 "--initialize-at-build-time=ch.qos.logback",
                 "--initialize-at-build-time=org.xml.sax",
                 "-H:+UnlockExperimentalVMOptions",
-                "--enable-url-protocols=http,https"
+                "--enable-url-protocols=http,https",
+                // JNA (via MINA SSHD's SSH-agent connector) calls System.load, a
+                // restricted method under JDK 24+. Bake native access for the unnamed
+                // module into the image so it doesn't print a "restricted method" warning.
+                "--enable-native-access=ALL-UNNAMED"
             )
         }
     }
