@@ -24,6 +24,11 @@ import static org.eclipse.jgit.submodule.SubmoduleStatusType.UNINITIALIZED;
 
 class GitServiceTest extends TestBase {
 
+    private static final String REPOSITORY_NAME = "some-group / a-project";
+    private static final String REPOSITORY_PATH = "some-group/a-project";
+    private static final String REPOSITORY_SSH_URL = "git@example.com:some-group/a-project.git";
+    private static final String REPOSITORY_HTTPS_URL = "https://example.invalid/some-group/a-project.git";
+
     @TempDir
     File cloneDirectory;
     private String cloneDirectoryPath;
@@ -245,6 +250,43 @@ class GitServiceTest extends TestBase {
         assertThat(errors).isEmpty();
         assertThat(gits).hasSize(3);
         assertThat(submoduleStatus).allSatisfy(subModules -> assertThat(subModules).allSatisfy(this::submoduleIsInitialized));
+    }
+
+    @Test
+    void clone_repositoryAlreadyCloned_returnsRepositoryAlreadyClonedException() throws GitAPIException {
+        final GitRepository repository = anExampleRepository();
+        final File existingRepoDirectory = new File(cloneDirectoryPath, REPOSITORY_PATH);
+        Git.init().setDirectory(existingRepoDirectory).call().close();
+
+        final Either<Throwable, Git> result = new GitService().clone(repository, cloneDirectoryPath);
+
+        assertThat(result.isLeft()).as("clone of an already-cloned repository returns a Left").isTrue();
+        assertThat(result.getLeft()).isInstanceOf(RepositoryAlreadyClonedException.class)
+                                    .hasMessageContaining(REPOSITORY_NAME)
+                                    .hasMessageContaining("already cloned");
+    }
+
+    @Test
+    void clone_directoryIsNotARepository_isNotTreatedAsAlreadyCloned() {
+        final GitService gitService = new GitService();
+        gitService.setCloneProtocol(GitCloneProtocol.HTTPS);
+        final GitRepository repository = anExampleRepository();
+        final File notARepositoryDirectory = new File(cloneDirectoryPath, REPOSITORY_PATH);
+        assertThat(notARepositoryDirectory.mkdirs()).as("the target directory exists but is not a git repository").isTrue();
+
+        final Either<Throwable, Git> result = gitService.clone(repository, cloneDirectoryPath);
+
+        assertThat(result.isLeft()).as("cloning into a non-repository directory still attempts (and fails) the clone").isTrue();
+        assertThat(result.getLeft()).isNotInstanceOf(RepositoryAlreadyClonedException.class);
+    }
+
+    private GitRepository anExampleRepository() {
+        return GitRepository.builder()
+                            .name(REPOSITORY_NAME)
+                            .path(REPOSITORY_PATH)
+                            .cloneUrlSsh(REPOSITORY_SSH_URL)
+                            .cloneUrlHttps(REPOSITORY_HTTPS_URL)
+                            .build();
     }
 
     private <T> Stream<T> flowableToStream(Flux<T> gits) {

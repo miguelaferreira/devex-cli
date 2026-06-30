@@ -190,8 +190,22 @@ public class GitService {
     public Either<Throwable, Git> clone(final GitRepository repository, final String cloneDirectory) {
         final String repositoryName = repository.getName();
         log.trace("Cloning repository '{}' under directory '{}'", repositoryName, cloneDirectory);
+        if (isAlreadyCloned(repository, cloneDirectory)) {
+            return Either.left(new RepositoryAlreadyClonedException(repositoryName));
+        }
         return tryClone(repository, cloneDirectory, false)
                 .toEither();
+    }
+
+    private boolean isAlreadyCloned(final GitRepository repository, final String cloneDirectory) {
+        final String pathToRepo = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
+        final File repositoryDirectory = new File(pathToRepo);
+        if (!repositoryDirectory.isDirectory()) {
+            return false;
+        }
+        return Try.withResources(() -> Git.open(repositoryDirectory))
+                  .of(git -> true)
+                  .getOrElse(false);
     }
 
     private Try<Git> tryClone(final GitRepository repository, final String cloneDirectory, final boolean cloneSubmodules) {
