@@ -172,8 +172,8 @@ jobs:
 
           echo "archive-sha=${archive_sha}" >> "$GITHUB_OUTPUT"
 
-          scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${archive_sha}"
-          scripts/update-formula.sh "Formula/devex-cli-native-binary.rb" "${new_version}" "${all_files_sha}"
+          scripts/update-formula.sh "Formula/devex-cli-jdk.rb" "${new_version}" "${archive_sha}"
+          scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${all_files_sha}"
         env:
           new_version: ${{ env.new_version }}
           all_files_sha: ${{ env.all_files_sha }}
