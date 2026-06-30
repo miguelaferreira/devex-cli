@@ -15,7 +15,6 @@ jobs:
         include:
           - { runner: ubuntu-latest,    os: Linux, arch: amd64 }
           - { runner: ubuntu-24.04-arm, os: Linux, arch: arm64 }
-          - { runner: macos-13,         os: macOS, arch: amd64 }
           - { runner: macos-latest,     os: macOS, arch: arm64 }
     steps:
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Checkout sources"
