@@ -1,6 +1,7 @@
 package devex.github;
 
 import devex.http.HttpClientUtils;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.inject.Singleton;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Slf4j
 @Singleton
@@ -27,15 +30,24 @@ public class GithubService {
     }
 
     public Either<String, GithubOrganization> getOrganization(String organization) {
-        log.debug("Getting organization {}", organization);
+        return getAccount("organization", organization, () -> client.getOrganization(organization));
+    }
+
+    public Either<String, GithubOrganization> getUser(String user) {
+        return getAccount("user", user, () -> client.getUser(user));
+    }
+
+    private Either<String, GithubOrganization> getAccount(String accountType, String accountName, Supplier<Optional<GithubOrganization>> fetchAccount) {
+        log.debug("Getting {} {}", accountType, accountName);
         try {
-            return Option.ofOptional(client.getOrganization(organization))
-                         .toEither("Organization not found");
+            return Option.ofOptional(fetchAccount.get())
+                         .toEither(StringUtils.capitalize(accountType) + " not found");
         } catch (HttpClientResponseException e) {
             final HttpStatus status = e.getStatus();
-            log.warn("Unexpected status {} fetching GitHub organization {}: {}, ",
+            log.warn("Unexpected status {} fetching GitHub {} {}: {}, ",
                     status.getCode(),
-                    organization, status.getReason());
+                    accountType,
+                    accountName, status.getReason());
             return Either.left(e.getMessage());
         }
     }
@@ -43,6 +55,11 @@ public class GithubService {
     public Flux<GithubRepository> getOrganizationRepositories(String organization) {
         log.debug("Getting repositories of organization {}", organization);
         return HttpClientUtils.paginatedApiCall(pageIndex -> client.getOrganizationRepositories(organization, pageIndex), this::extractNextPageFromLinkHeader);
+    }
+
+    public Flux<GithubRepository> getUserRepositories(String user) {
+        log.debug("Getting repositories of user {}", user);
+        return HttpClientUtils.paginatedApiCall(pageIndex -> client.getUserRepositories(user, pageIndex), this::extractNextPageFromLinkHeader);
     }
 
     private String extractNextPageFromLinkHeader(HttpResponse<?> response) {

@@ -14,8 +14,8 @@ import picocli.CommandLine.Command;
         description = {
                 "The GitHub URL and private token are read from the environment, using GItHUB_URL and GITHUB_TOKEN variables.",
                 "GItHUB_URL defaults to 'https://api.github.com'.",
-                "The GitHub token is used for both querying the GitHub API to discover the organization to clone and as the password for cloning using HTTPS.",
-                "No token is needed for public groups and repositories."
+                "The GitHub token is used for both querying the GitHub API to discover the organization (or user) to clone and as the password for cloning using HTTPS.",
+                "No token is needed for public organizations, users and repositories."
         },
         scope = CommandLine.ScopeType.INHERIT
 )

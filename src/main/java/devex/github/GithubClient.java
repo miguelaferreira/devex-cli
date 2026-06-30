@@ -25,4 +25,10 @@ public interface GithubClient {
 
     @Get(value = "/orgs/{org}/repos{?page}")
     Flux<HttpResponse<List<GithubRepository>>> getOrganizationRepositories(@PathVariable String org, @QueryValue int page);
+
+    @Get(value = "/users/{user}")
+    Optional<GithubOrganization> getUser(@PathVariable String user);
+
+    @Get(value = "/users/{user}/repos{?page}")
+    Flux<HttpResponse<List<GithubRepository>>> getUserRepositories(@PathVariable String user, @QueryValue int page);
 }
