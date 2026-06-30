@@ -2,6 +2,7 @@ package devex;
 
 
 import devex.git.GitCloneProtocol;
+import devex.git.GitCloneResults;
 import devex.git.GitRepository;
 import devex.git.GitService;
 import devex.github.GithubOrganization;
@@ -110,11 +111,8 @@ public class GithubCloneCommand implements Runnable {
                           .forEach(tuple -> {
                               final GithubRepository repository = tuple._1;
                               final Either<Throwable, Git> gitRepoOrError = tuple._2;
-                              if (gitRepoOrError.isLeft()) {
-                                  log.warn("Git operation failed", gitRepoOrError.getLeft());
-                              } else {
-                                  log.info("Repository '{}' updated.", repository.getFullName());
-                              }
+                              GitCloneResults.log(log, gitRepoOrError,
+                                      () -> String.format("Repository '%s' updated.", repository.getFullName()));
                           });
 
         log.info("All done.");
