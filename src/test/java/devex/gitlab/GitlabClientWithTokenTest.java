@@ -25,16 +25,16 @@ class GitlabClientWithTokenTest extends TestBase {
     private GitlabClient client;
 
     @Test
-    void searchGroups_privateGroup() {
-        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PRIVATE_GROUP_NAME, true, 10, 1);
+    void searchTopLevelGroups_privateGroup() {
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchTopLevelGroups(PRIVATE_GROUP_NAME, true, 10, 1);
 
         final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.toIterable();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).hasSize(2)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PRIVATE_GROUP_NAME));
+        assertThat(response.getBody().get()).extracting(GitlabGroup::getFullPath)
+                                            .contains(PRIVATE_GROUP_NAME);
     }
 
     @Test
@@ -47,16 +47,16 @@ class GitlabClientWithTokenTest extends TestBase {
     }
 
     @Test
-    void searchGroups_publicGroup() {
-        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchGroups(PUBLIC_GROUP_NAME, true, 10, 1);
+    void searchTopLevelGroups_publicGroup() {
+        final Flux<HttpResponse<List<GitlabGroup>>> groups = client.searchTopLevelGroups(PUBLIC_GROUP_NAME, true, 10, 1);
 
         final Iterable<HttpResponse<List<GitlabGroup>>> iterable = groups.toIterable();
         assertThat(iterable).hasSize(1);
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).hasSize(6)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PUBLIC_GROUP_NAME));
+        assertThat(response.getBody().get()).extracting(GitlabGroup::getFullPath)
+                                            .contains(PUBLIC_GROUP_NAME);
     }
 
     @Test

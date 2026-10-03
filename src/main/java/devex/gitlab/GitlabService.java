@@ -35,17 +35,35 @@ public class GitlabService {
 
     public Either<String, GitlabGroup> findGroupBy(String search, GitlabGroupSearchMode by) {
         log.debug("Looking for group {}: {}", by.textualQualifier(), search);
-        if (by == GitlabGroupSearchMode.ID) {
-            return getGroup(search);
-        } else {
-            Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.searchGroups(search, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
-            final Flux<GitlabGroup> results = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
-            return results.filter(gitlabGroup -> by.groupPredicate(search).test(gitlabGroup))
-                          .map(Either::<String, GitlabGroup>right)
-                          .next()
-                          .defaultIfEmpty(Either.left(GROUP_NOT_FOUND))
-                          .block();
+        switch (by) {
+            case ID:
+                return getGroup(search);
+            case FULL_PATH:
+                // GitLab accepts the group's full path in place of its id (the client URL-encodes it).
+                return getGroup(search);
+            default:
+                return findGroupByName(search, by);
         }
+    }
+
+    private Either<String, GitlabGroup> findGroupByName(String search, GitlabGroupSearchMode by) {
+        final Either<String, GitlabGroup> topLevelGroup =
+                searchGroup(by, search, pageIndex -> client.searchTopLevelGroups(search, true, MAX_ELEMENTS_PER_PAGE, pageIndex));
+        if (topLevelGroup.isRight()) {
+            return topLevelGroup;
+        }
+        // Not a top-level group: look through the groups at every level.
+        return searchGroup(by, search, pageIndex -> client.searchGroups(search, true, MAX_ELEMENTS_PER_PAGE, pageIndex));
+    }
+
+    private Either<String, GitlabGroup> searchGroup(GitlabGroupSearchMode by, String search,
+                                                    Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall) {
+        final Flux<GitlabGroup> results = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
+        return results.filter(gitlabGroup -> by.groupPredicate(search).test(gitlabGroup))
+                      .map(Either::<String, GitlabGroup>right)
+                      .next()
+                      .defaultIfEmpty(Either.left(GROUP_NOT_FOUND))
+                      .block();
     }
 
     public Either<String, GitlabGroup> getGroup(String id) {
