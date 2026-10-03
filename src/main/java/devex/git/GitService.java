@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.PublicKey;
 import java.security.Security;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
@@ -62,7 +60,6 @@ public class GitService {
         return new SshdSessionFactoryBuilder()
                 .setHomeDirectory(new File(System.getProperty("user.home")))
                 .setSshDirectory(Path.of(System.getProperty("user.home"), ".ssh").toFile())
-                .setConfigFile(GitService::sshConfigFile)
                 .setServerKeyDatabase(GitService::preferStrongHostKeys)
                 .withDefaultConnectorFactory()
                 .build(null);
@@ -110,60 +107,6 @@ public class GitService {
                 return delegate.accept(connectAddress, remoteAddress, serverKey, config, provider);
             }
         };
-    }
-
-    static final String STRIPPED_LINE_PREFIX = "# (devex) stripped for MINA SSHD compatibility: ";
-
-    // `IdentityFile <path>.pub` is OpenSSH's idiom for "ask the agent for the key
-    // matching this public key" (used heavily with 1Password / hardware tokens).
-    // MINA SSHD can't read it: it tries to parse the .pub as a private key and
-    // bails, then — combined with `IdentitiesOnly yes` — refuses to fall back to
-    // the agent. Strip both directives in a temp wrapper so the agent path stays
-    // open while the rest of the user's config (IdentityAgent, HostName, etc.)
-    // is honored unchanged.
-    private static final Pattern IDENTITY_FILE_PUB = Pattern.compile(
-            "^\\s*IdentityFile\\s+(?:\\S+\\.pub|\"[^\"]*\\.pub\")\\s*$",
-            Pattern.CASE_INSENSITIVE);
-    private static final Pattern IDENTITIES_ONLY_YES = Pattern.compile(
-            "^\\s*IdentitiesOnly\\s+yes\\s*$",
-            Pattern.CASE_INSENSITIVE);
-
-    private static File sshConfigFile(File sshDir) {
-        final File userConfig = new File(sshDir, "config");
-        if (!userConfig.isFile()) {
-            return userConfig;
-        }
-        try {
-            final String original = Files.readString(userConfig.toPath());
-            final String filtered = filterIncompatibleDirectives(original);
-            if (filtered.equals(original)) {
-                return userConfig;
-            }
-            final File tempConfig = Files.createTempFile("devex-ssh-config", ".cfg").toFile();
-            tempConfig.deleteOnExit();
-            Files.writeString(tempConfig.toPath(), filtered);
-            return tempConfig;
-        } catch (IOException e) {
-            log.debug("Could not write filtered SSH config wrapper, falling back to user's config", e);
-            return userConfig;
-        }
-    }
-
-    static String filterIncompatibleDirectives(String content) {
-        final String[] lines = content.split("\n", -1);
-        final StringBuilder out = new StringBuilder(content.length() + lines.length);
-        for (int i = 0; i < lines.length; i++) {
-            final String line = lines[i];
-            if (IDENTITY_FILE_PUB.matcher(line).matches() || IDENTITIES_ONLY_YES.matcher(line).matches()) {
-                out.append(STRIPPED_LINE_PREFIX).append(line);
-            } else {
-                out.append(line);
-            }
-            if (i < lines.length - 1) {
-                out.append('\n');
-            }
-        }
-        return out.toString();
     }
 
     public static final String HTTPS_USERNAME = "git";
