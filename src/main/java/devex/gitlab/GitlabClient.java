@@ -28,6 +28,16 @@ public interface GitlabClient {
             @QueryValue int page
     );
 
+    // gitlab.com no longer returns top-level groups from the plain search above (it comes back empty),
+    // while restricting the search to top-level groups still finds them.
+    @Get("/groups?top_level_only=true{&search,per_page,all_available,page}")
+    Flux<HttpResponse<List<GitlabGroup>>> searchTopLevelGroups(
+            @QueryValue String search,
+            @QueryValue(value = "all_available") boolean allAvailable,
+            @QueryValue(value = "per_page") int perPage,
+            @QueryValue int page
+    );
+
     @Get("/groups/{id}")
     Optional<GitlabGroup> getGroup(@PathVariable String id);
 
