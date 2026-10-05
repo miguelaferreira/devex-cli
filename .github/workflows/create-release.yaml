@@ -9,6 +9,7 @@ jobs:
   build_release:
     name: "Build release"
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -44,9 +45,11 @@ jobs:
           cat << EOF > ~/.ssh/config
           Host gitlab.com
             IdentityFile ~/.ssh/id_ed25519
+            ConnectTimeout 30
 
           Host github.com
             IdentityFile ~/.ssh/id_rsa
+            ConnectTimeout 30
           EOF
 
           chmod -R 500 ~/.ssh
@@ -54,15 +57,27 @@ jobs:
           bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
           bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
 
+      # The macOS runners export SSH_AUTH_SOCK pointing at a launchd ssh-agent that never
+      # answers in a headless session, so every SSH clone stalls until MINA's 2-minute
+      # timeout. CI authenticates with the IdentityFile entries above and needs no agent,
+      # so run the SSH-using steps without one (Linux runners have none to begin with).
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Gradle build"
-        run: ./gradlew build nativeCompile
+        run: env -u SSH_AUTH_SOCK ./gradlew build nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
           DEVEX_SSH_INTEGRATION_TESTS: "true"
 
+      - name: "[${{ matrix.os }}-${{ matrix.arch }}] Upload test reports"
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-${{ matrix.os }}-${{ matrix.arch }}
+          path: build/reports/tests
+          retention-days: 5
+
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Run and test native image"
-        run: .github/scripts/run-native-binary.sh
+        run: env -u SSH_AUTH_SOCK .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
