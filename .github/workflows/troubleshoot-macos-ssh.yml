@@ -1,0 +1,93 @@
+name: "Troubleshoot macOS SSH (temporary)"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix-macos-ssh-tests
+    paths:
+      - .github/workflows/troubleshoot-macos-ssh.yml
+
+jobs:
+  troubleshoot:
+    name: "macOS SSH clone"
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v4
+
+      - name: "Set up GraalVM"
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+
+      - name: "Setup SSH"
+        run: |
+          mkdir -p ~/.ssh
+          cat .github/files/known_hosts > ~/.ssh/known_hosts
+          echo "${bot_devex_ssh_private_key_rsa}" > ~/.ssh/id_rsa
+          echo "${bot_devex_ssh_private_key_ed25519}" > ~/.ssh/id_ed25519
+
+          cat << EOF > ~/.ssh/config
+          Host gitlab.com
+            IdentityFile ~/.ssh/id_ed25519
+            ConnectTimeout 20
+
+          Host github.com
+            IdentityFile ~/.ssh/id_rsa
+            ConnectTimeout 20
+          EOF
+
+          chmod -R 500 ~/.ssh
+        env:
+          bot_devex_ssh_private_key_rsa: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_RSA }}
+          bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
+
+      # macOS has no `timeout`; perl's alarm gives the same hard cap.
+      - name: "Diagnose: environment and agent"
+        run: |
+          echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-<unset>}"
+          ls -la "${SSH_AUTH_SOCK:-/nonexistent}" || true
+          echo "--- ssh-add -l"
+          perl -e 'alarm shift; exec @ARGV' 20 ssh-add -l; echo "ssh-add exit: $?"
+
+      - name: "Diagnose: plain ssh to gitlab.com"
+        run: |
+          perl -e 'alarm shift; exec @ARGV' 40 ssh -o BatchMode=yes -vT git@gitlab.com 2>&1 | tail -60
+          echo "ssh exit: ${PIPESTATUS[0]}"
+
+      - name: "Experiment 1: SSH test as-is"
+        id: as_is
+        continue-on-error: true
+        run: ./gradlew cleanTest test --no-daemon --tests 'devex.git.GitServiceTest.clonePublicRepo_ssh_withoutSubmodule'
+        env:
+          DEVEX_SSH_INTEGRATION_TESTS: "true"
+
+      - name: "Experiment 2: SSH test with SSH_AUTH_SOCK unset"
+        id: no_agent
+        if: always()
+        run: env -u SSH_AUTH_SOCK ./gradlew cleanTest test --no-daemon --tests 'devex.git.GitServiceTest.clonePublicRepo_ssh_withoutSubmodule'
+        env:
+          DEVEX_SSH_INTEGRATION_TESTS: "true"
+
+      - name: "Summary"
+        if: always()
+        run: |
+          echo "as-is outcome:        ${{ steps.as_is.outcome }}"
+          echo "no-agent outcome:     ${{ steps.no_agent.outcome }}"
+
+      - name: "Upload Test Reports"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: build/reports/tests
+          retention-days: 3
+
+      - name: "Clean up"
+        if: ${{ always() }}
+        run: sudo rm -rf ~/.ssh
