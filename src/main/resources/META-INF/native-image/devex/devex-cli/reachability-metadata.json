@@ -473,15 +473,6 @@
       ]
     },
     {
-      "type": "devex.gitlab.$GitlabProject$GitlabProjectBuilder$Introspection",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "devex.gitlab.$GitlabProject$Introspection",
       "methods": [
         {
