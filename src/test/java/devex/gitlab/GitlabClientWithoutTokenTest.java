@@ -58,7 +58,7 @@ class GitlabClientWithoutTokenTest extends TestBase {
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).extracting(GitlabGroup::getFullPath)
+        assertThat(response.getBody().get()).extracting(GitlabGroup::fullPath)
                                             .contains(PUBLIC_GROUP_NAME);
     }
 
@@ -67,8 +67,8 @@ class GitlabClientWithoutTokenTest extends TestBase {
         final Optional<GitlabGroup> maybeGroup = client.getGroup(PUBLIC_GROUP_ID);
 
         assertThat(maybeGroup).isNotEmpty();
-        assertThat(maybeGroup.get().getId()).isEqualTo(PUBLIC_GROUP_ID);
-        assertThat(maybeGroup.get().getName()).isEqualTo(PUBLIC_GROUP_NAME);
+        assertThat(maybeGroup.get().id()).isEqualTo(PUBLIC_GROUP_ID);
+        assertThat(maybeGroup.get().name()).isEqualTo(PUBLIC_GROUP_NAME);
     }
 
     @Test
@@ -96,7 +96,7 @@ class GitlabClientWithoutTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(3)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PUBLIC_GROUP_NAME));
+                                            .allSatisfy(group -> assertThat(group.fullPath()).contains(PUBLIC_GROUP_NAME));
     }
 
     @Test
@@ -109,7 +109,7 @@ class GitlabClientWithoutTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
-                                            .allSatisfy(project -> assertThat(project.getName()).isEqualTo("a-project"));
+                                            .allSatisfy(project -> assertThat(project.name()).isEqualTo("a-project"));
     }
 
     @Test

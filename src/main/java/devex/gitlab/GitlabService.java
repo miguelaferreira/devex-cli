@@ -35,15 +35,11 @@ public class GitlabService {
 
     public Either<String, GitlabGroup> findGroupBy(String search, GitlabGroupSearchMode by) {
         log.debug("Looking for group {}: {}", by.textualQualifier(), search);
-        switch (by) {
-            case ID:
-                return getGroup(search);
-            case FULL_PATH:
-                // GitLab accepts the group's full path in place of its id (the client URL-encodes it).
-                return getGroup(search);
-            default:
-                return findGroupByName(search, by);
-        }
+        return switch (by) {
+            // GitLab accepts the group's full path in place of its id (the client URL-encodes it).
+            case ID, FULL_PATH -> getGroup(search);
+            case NAME -> findGroupByName(search, by);
+        };
     }
 
     private Either<String, GitlabGroup> findGroupByName(String search, GitlabGroupSearchMode by) {
@@ -77,11 +73,11 @@ public class GitlabService {
     }
 
     public Flux<GitlabProject> getGitlabGroupProjects(GitlabGroup group) {
-        log.debug("Searching for projects in group '{}'", group.getFullPath());
-        final String groupId = group.getId();
+        log.debug("Searching for projects in group '{}'", group.fullPath());
+        final String groupId = group.id();
         final Flux<GitlabProject> projects = getGroupProjects(groupId);
         final Flux<GitlabGroup> subGroups = getSubGroups(groupId);
-        return Flux.mergeDelayError(32, projects, subGroups.flatMap(subGroup -> getGroupProjects(subGroup.getId())));
+        return Flux.mergeDelayError(32, projects, subGroups.flatMap(subGroup -> getGroupProjects(subGroup.id())));
     }
 
     protected Flux<GitlabGroup> getSubGroups(String groupId) {
@@ -90,7 +86,7 @@ public class GitlabService {
         if (maybeVersion.isDefined()) {
             final GitlabVersion gitlabVersion = maybeVersion.get();
             if (gitlabVersion.isBefore(GROUP_DESCENDANTS_VERSION)) {
-                log.trace("Retrieving sib-groups recursively because GitLab server version is '{}'", gitlabVersion.getVersion());
+                log.trace("Retrieving sib-groups recursively because GitLab server version is '{}'", gitlabVersion.version());
                 return getSubGroupsRecursively(groupId);
             }
         } else {
@@ -123,7 +119,7 @@ public class GitlabService {
     protected Flux<GitlabGroup> getSubGroupsRecursively(String groupId) {
         final Function<Integer, Flux<HttpResponse<List<GitlabGroup>>>> apiCall = pageIndex -> client.groupSubGroups(groupId, true, MAX_ELEMENTS_PER_PAGE, pageIndex);
         final Flux<GitlabGroup> subGroups = paginatedApiCall(apiCall, NEXT_PAGE_EXTRACTOR_FUNCTION);
-        return subGroups.flatMap(group -> Flux.just(group).mergeWith(getSubGroupsRecursively(group.getId())));
+        return subGroups.flatMap(group -> Flux.just(group).mergeWith(getSubGroupsRecursively(group.id())));
     }
 
     private Flux<GitlabProject> getGroupProjects(String groupId) {

@@ -27,7 +27,7 @@ class GitlabServiceTest extends TestBase {
         final Either<String, GitlabGroup> maybeGroup = service.findGroupBy(GITLAB_GROUP_ID, GitlabGroupSearchMode.ID);
 
         VavrAssertions.assertThat(maybeGroup).isRight();
-        Assertions.assertThat(maybeGroup.get().getName()).isEqualTo(GITLAB_GROUP_NAME);
+        Assertions.assertThat(maybeGroup.get().name()).isEqualTo(GITLAB_GROUP_NAME);
     }
 
     @Test
@@ -35,7 +35,7 @@ class GitlabServiceTest extends TestBase {
         final Either<String, GitlabGroup> maybeGroup = service.findGroupBy(GITLAB_GROUP_NAME, GitlabGroupSearchMode.NAME);
 
         VavrAssertions.assertThat(maybeGroup).isRight();
-        Assertions.assertThat(maybeGroup.get().getName()).isEqualTo(GITLAB_GROUP_NAME);
+        Assertions.assertThat(maybeGroup.get().name()).isEqualTo(GITLAB_GROUP_NAME);
     }
 
     @Test
@@ -43,7 +43,7 @@ class GitlabServiceTest extends TestBase {
         final Either<String, GitlabGroup> maybeGroup = service.findGroupBy(GITLAB_GROUP_FULL_PATH, GitlabGroupSearchMode.FULL_PATH);
 
         VavrAssertions.assertThat(maybeGroup).isRight();
-        Assertions.assertThat(maybeGroup.get().getName()).isEqualTo("sub-group-3");
+        Assertions.assertThat(maybeGroup.get().name()).isEqualTo("sub-group-3");
     }
 
     @Test

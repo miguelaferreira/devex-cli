@@ -10,15 +10,12 @@ import devex.github.GithubRepository;
 import devex.github.GithubService;
 import io.micronaut.context.annotation.Value;
 import reactor.core.publisher.Flux;
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
 import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import jakarta.inject.Inject;
 
 @Slf4j
 @Command(
@@ -66,12 +63,16 @@ public class GithubCloneCommand implements Runnable {
     )
     private String localPath;
 
+    private final GithubService githubService;
+    private final GitService gitService;
+    private final String token;
+
     @Inject
-    GithubService githubService;
-    @Inject
-    GitService gitService;
-    @Value("${github.token:}")
-    String token;
+    public GithubCloneCommand(GithubService githubService, GitService gitService, @Value("${github.token:}") String token) {
+        this.githubService = githubService;
+        this.gitService = gitService;
+        this.token = token;
+    }
 
     @Override
     public void run() {
@@ -95,25 +96,20 @@ public class GithubCloneCommand implements Runnable {
             return;
         }
 
-        final Flux<Tuple2<GithubRepository, Either<Throwable, Git>>> clonedRepositories =
-                maybeRepositories.get()
-                             .map(repository -> Tuple.of(repository, buildGitRepository(repository)))
-                             .map(tuple -> tuple.map2(
-                                             repository -> recurseSubmodules
-                                                     ? gitService.cloneOrInitSubmodules(repository, localPath)
-                                                     : gitService.clone(repository, localPath)
-                                     )
-                             );
-
-        clonedRepositories.toIterable()
-                          .forEach(tuple -> {
-                              final GithubRepository repository = tuple._1;
-                              final Either<Throwable, Git> gitRepoOrError = tuple._2;
-                              GitCloneResults.log(log, gitRepoOrError,
-                                      () -> String.format("Repository '%s' updated.", repository.getFullName()));
-                          });
+        maybeRepositories.get()
+                         .map(repository -> new CloneOutcome(repository, cloneRepository(repository)))
+                         .toIterable()
+                         .forEach(outcome -> GitCloneResults.log(log, outcome.result(),
+                                 () -> "Repository '%s' updated.".formatted(outcome.repository().fullName())));
 
         log.info("All done.");
+    }
+
+    private Either<Throwable, Git> cloneRepository(GithubRepository repository) {
+        final GitRepository gitRepository = buildGitRepository(repository);
+        return recurseSubmodules
+                ? gitService.cloneOrInitSubmodules(gitRepository, localPath)
+                : gitService.clone(gitRepository, localPath);
     }
 
     private Either<String, Flux<GithubRepository>> resolveRepositories() {
@@ -121,7 +117,7 @@ public class GithubCloneCommand implements Runnable {
         if (maybeOrganization.isRight()) {
             final GithubOrganization organization = maybeOrganization.get();
             log.debug("Found organization = {}", organization);
-            return Either.right(githubService.getOrganizationRepositories(organization.getName()));
+            return Either.right(githubService.getOrganizationRepositories(organization.name()));
         }
 
         log.debug("Organization '{}' not found ({}), trying user", githubOrg, maybeOrganization.getLeft());
@@ -129,7 +125,7 @@ public class GithubCloneCommand implements Runnable {
         if (maybeUser.isRight()) {
             final GithubOrganization user = maybeUser.get();
             log.debug("Found user = {}", user);
-            return Either.right(githubService.getUserRepositories(user.getName()));
+            return Either.right(githubService.getUserRepositories(user.name()));
         }
 
         return Either.left(maybeUser.getLeft());
@@ -137,10 +133,13 @@ public class GithubCloneCommand implements Runnable {
 
     private GitRepository buildGitRepository(GithubRepository repository) {
         return GitRepository.builder()
-                            .name(repository.getFullName())
-                            .path(repository.getFullName())
-                            .cloneUrlSsh(repository.getSshUrl())
-                            .cloneUrlHttps(repository.getHttpsUrl())
+                            .name(repository.fullName())
+                            .path(repository.fullName())
+                            .cloneUrlSsh(repository.sshUrl())
+                            .cloneUrlHttps(repository.httpsUrl())
                             .build();
+    }
+
+    private record CloneOutcome(GithubRepository repository, Either<Throwable, Git> result) {
     }
 }

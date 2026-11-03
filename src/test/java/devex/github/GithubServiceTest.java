@@ -51,7 +51,7 @@ class GithubServiceTest {
         }
 
         assertThat(maybeUser.isRight()).as("user '%s' should be found", USER).isTrue();
-        assertThat(maybeUser.get().getName()).isEqualTo(USER);
+        assertThat(maybeUser.get().name()).isEqualTo(USER);
     }
 
     @Test
@@ -64,7 +64,7 @@ class GithubServiceTest {
 
             final Iterable<GithubRepository> iterable = repositories.toIterable();
             assertThat(iterable).isNotEmpty()
-                                .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase(USER));
+                                .allSatisfy(repository -> assertThat(repository.fullName()).containsIgnoringCase(USER));
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }

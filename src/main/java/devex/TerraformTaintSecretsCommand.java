@@ -4,11 +4,11 @@ import devex.terraform.TerraformModuleDirectory;
 import devex.terraform.TerraformStateService;
 import reactor.core.publisher.Flux;
 import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import jakarta.inject.Inject;
 import java.nio.file.Path;
 
 @Slf4j
@@ -42,8 +42,12 @@ public class TerraformTaintSecretsCommand implements Runnable {
     )
     private String terraformModule;
 
+    private final TerraformStateService terraformStateService;
+
     @Inject
-    TerraformStateService terraformStateService;
+    public TerraformTaintSecretsCommand(TerraformStateService terraformStateService) {
+        this.terraformStateService = terraformStateService;
+    }
 
     @Override
     public void run() {

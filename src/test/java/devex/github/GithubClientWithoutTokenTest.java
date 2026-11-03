@@ -32,7 +32,7 @@ class GithubClientWithoutTokenTest {
             final Optional<GithubOrganization> maybeOrg = client.getOrganization(ORGANIZATION);
 
             assertThat(maybeOrg).isNotEmpty();
-            assertThat(maybeOrg.get().getName()).isEqualTo(ORGANIZATION);
+            assertThat(maybeOrg.get().name()).isEqualTo(ORGANIZATION);
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }
@@ -49,7 +49,7 @@ class GithubClientWithoutTokenTest {
             assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.getBody()).isNotEmpty();
             assertThat(response.getBody().get()).isNotEmpty()
-                                                .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase(ORGANIZATION));
+                                                .allSatisfy(repository -> assertThat(repository.fullName()).containsIgnoringCase(ORGANIZATION));
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }
@@ -61,7 +61,7 @@ class GithubClientWithoutTokenTest {
             final Optional<GithubOrganization> maybeUser = client.getUser(USER);
 
             assertThat(maybeUser).isNotEmpty();
-            assertThat(maybeUser.get().getName()).isEqualTo(USER);
+            assertThat(maybeUser.get().name()).isEqualTo(USER);
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }
@@ -78,7 +78,7 @@ class GithubClientWithoutTokenTest {
             assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.getBody()).isNotEmpty();
             assertThat(response.getBody().get()).isNotEmpty()
-                                                .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase(USER));
+                                                .allSatisfy(repository -> assertThat(repository.fullName()).containsIgnoringCase(USER));
         } catch (HttpClientResponseException e) {
             GithubTestHelper.handleException(e);
         }

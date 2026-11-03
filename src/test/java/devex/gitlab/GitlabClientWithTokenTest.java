@@ -33,7 +33,7 @@ class GitlabClientWithTokenTest extends TestBase {
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).extracting(GitlabGroup::getFullPath)
+        assertThat(response.getBody().get()).extracting(GitlabGroup::fullPath)
                                             .contains(PRIVATE_GROUP_NAME);
     }
 
@@ -42,8 +42,8 @@ class GitlabClientWithTokenTest extends TestBase {
         final Optional<GitlabGroup> maybeGroup = client.getGroup(PRIVATE_GROUP_ID);
 
         assertThat(maybeGroup).isNotEmpty();
-        assertThat(maybeGroup.get().getId()).isEqualTo(PRIVATE_GROUP_ID);
-        assertThat(maybeGroup.get().getName()).isEqualTo(PRIVATE_GROUP_NAME);
+        assertThat(maybeGroup.get().id()).isEqualTo(PRIVATE_GROUP_ID);
+        assertThat(maybeGroup.get().name()).isEqualTo(PRIVATE_GROUP_NAME);
     }
 
     @Test
@@ -55,7 +55,7 @@ class GitlabClientWithTokenTest extends TestBase {
         final HttpResponse<List<GitlabGroup>> response = iterable.iterator().next();
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
-        assertThat(response.getBody().get()).extracting(GitlabGroup::getFullPath)
+        assertThat(response.getBody().get()).extracting(GitlabGroup::fullPath)
                                             .contains(PUBLIC_GROUP_NAME);
     }
 
@@ -69,7 +69,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PRIVATE_GROUP_NAME));
+                                            .allSatisfy(group -> assertThat(group.fullPath()).contains(PRIVATE_GROUP_NAME));
     }
 
     @Test
@@ -82,7 +82,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(2)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PUBLIC_GROUP_NAME));
+                                            .allSatisfy(group -> assertThat(group.fullPath()).contains(PUBLIC_GROUP_NAME));
     }
 
     @Test
@@ -95,7 +95,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PRIVATE_GROUP_NAME));
+                                            .allSatisfy(group -> assertThat(group.fullPath()).contains(PRIVATE_GROUP_NAME));
     }
 
     @Test
@@ -108,7 +108,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(3)
-                                            .allSatisfy(group -> assertThat(group.getFullPath()).contains(PUBLIC_GROUP_NAME));
+                                            .allSatisfy(group -> assertThat(group.fullPath()).contains(PUBLIC_GROUP_NAME));
     }
 
     @Test
@@ -121,7 +121,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
-                                            .allSatisfy(project -> assertThat(project.getName()).isEqualTo("a-project"));
+                                            .allSatisfy(project -> assertThat(project.name()).isEqualTo("a-project"));
     }
 
     @Test
@@ -134,7 +134,7 @@ class GitlabClientWithTokenTest extends TestBase {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).hasSize(1)
-                                            .allSatisfy(project -> assertThat(project.getName()).isEqualTo("a-private-project"));
+                                            .allSatisfy(project -> assertThat(project.name()).isEqualTo("a-private-project"));
     }
 
     @Test
@@ -142,6 +142,6 @@ class GitlabClientWithTokenTest extends TestBase {
         final GitlabVersion version = client.version();
 
         assertThat(version).isNotNull();
-        assertThat(version.getVersion()).isNotNull();
+        assertThat(version.version()).isNotNull();
     }
 }

@@ -26,9 +26,10 @@ public class TerraformModuleDirectory {
     public Either<String, String> execute(String executablePath, String[] arguments) {
         ByteArrayOutputStream stdout = new ByteArrayOutputStream();
         PumpStreamHandler psh = new PumpStreamHandler(stdout);
-        Executor executor = new DefaultExecutor();
+        Executor executor = DefaultExecutor.builder()
+                                           .setWorkingDirectory(path.toFile())
+                                           .get();
         executor.setStreamHandler(psh);
-        executor.setWorkingDirectory(path.toFile());
         final CommandLine commandLine = new CommandLine(executablePath);
         commandLine.addArguments(arguments);
         final Either<String, Integer> maybeExitValue = Try.of(() -> executor.execute(commandLine))

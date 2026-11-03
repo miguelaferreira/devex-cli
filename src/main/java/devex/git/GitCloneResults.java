@@ -28,8 +28,8 @@ public final class GitCloneResults {
             return;
         }
         final Throwable error = result.getLeft();
-        if (error instanceof RepositoryAlreadyClonedException) {
-            log.info(error.getMessage());
+        if (error instanceof RepositoryAlreadyClonedException alreadyCloned) {
+            log.info(alreadyCloned.getMessage());
         } else {
             log.warn("Git operation failed", error);
         }

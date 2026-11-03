@@ -7,13 +7,15 @@ import io.micronaut.logging.LogLevel;
 import io.micronaut.logging.LoggingSystem;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
-public class LoggingConfiguration {
+public final class LoggingConfiguration {
 
     public static final String APPLICATION_LOGGER = "devex";
 
-    public static final String[] ALL_LOGGERS = {
+    public static final List<String> ALL_LOGGERS = List.of(
             APPLICATION_LOGGER,
             "io.micronaut.context.env",
             "io.micronaut.http.client",
@@ -26,8 +28,14 @@ public class LoggingConfiguration {
             "org.eclipse.jgit.api",
             "org.eclipse.jgit.errors",
             "org.eclipse.jgit.transport",
-            "org.apache.sshd",
-    };
+            "org.apache.sshd"
+    );
+
+    private static final String LOGS_CONFIG = "/logback.xml";
+    private static final String FULL_LOGS_CONFIG = "/logback-full-logs.xml";
+
+    private LoggingConfiguration() {
+    }
 
     public static void configureLoggers(LoggingSystem loggingSystem, LogLevel level, boolean fullLogs) throws JoranException {
         if (fullLogs) {
@@ -39,7 +47,7 @@ public class LoggingConfiguration {
     }
 
     private static void configureAllLoggers(LoggingSystem loggingSystem, LogLevel level) {
-        Arrays.stream(ALL_LOGGERS).forEach(logger -> loggingSystem.setLogLevel(logger, level));
+        ALL_LOGGERS.forEach(logger -> loggingSystem.setLogLevel(logger, level));
     }
 
     public static void configureApplicationLoggers(LoggingSystem loggingSystem, LogLevel level) {
@@ -47,18 +55,22 @@ public class LoggingConfiguration {
     }
 
     public static void loadLogsConfig() throws JoranException {
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        context.reset();
-        JoranConfigurator configurator = new JoranConfigurator();
-        configurator.setContext(context);
-        configurator.doConfigure(LoggingConfiguration.class.getResourceAsStream("/logback.xml"));
+        loadConfig(LOGS_CONFIG);
     }
 
     public static void loadFullLogsConfig() throws JoranException {
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loadConfig(FULL_LOGS_CONFIG);
+    }
+
+    private static void loadConfig(String resource) throws JoranException {
+        final var context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.reset();
-        JoranConfigurator configurator = new JoranConfigurator();
+        final var configurator = new JoranConfigurator();
         configurator.setContext(context);
-        configurator.doConfigure(LoggingConfiguration.class.getResourceAsStream("/logback-full-logs.xml"));
+        try (InputStream config = LoggingConfiguration.class.getResourceAsStream(resource)) {
+            configurator.doConfigure(config);
+        } catch (IOException e) {
+            throw new JoranException("Could not read logging configuration " + resource, e);
+        }
     }
 }

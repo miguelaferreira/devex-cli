@@ -9,16 +9,12 @@ import devex.gitlab.GitlabGroupSearchMode;
 import devex.gitlab.GitlabProject;
 import devex.gitlab.GitlabService;
 import io.micronaut.context.annotation.Value;
-import reactor.core.publisher.Flux;
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
 import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import jakarta.inject.Inject;
 
 @Slf4j
 @Command(
@@ -74,12 +70,16 @@ public class GitlabCloneCommand implements Runnable {
     )
     private String localPath;
 
+    private final GitlabService gitlabService;
+    private final GitService gitService;
+    private final String token;
+
     @Inject
-    GitlabService gitlabService;
-    @Inject
-    GitService gitService;
-    @Value("${gitlab.token:}")
-    String token;
+    public GitlabCloneCommand(GitlabService gitlabService, GitService gitService, @Value("${gitlab.token:}") String token) {
+        this.gitlabService = gitlabService;
+        this.gitService = gitService;
+        this.token = token;
+    }
 
     @Override
     public void run() {
@@ -106,33 +106,31 @@ public class GitlabCloneCommand implements Runnable {
         final GitlabGroup group = maybeGroup.get();
         log.debug("Found group = {}", group);
 
-        final Flux<Tuple2<GitlabProject, Either<Throwable, Git>>> clonedProjects =
-                gitlabService.getGitlabGroupProjects(group)
-                             .map(project -> Tuple.of(project, buildGitRepository(project)))
-                             .map(tuple -> tuple.map2(
-                                             repository -> recurseSubmodules
-                                                     ? gitService.cloneOrInitSubmodules(repository, localPath)
-                                                     : gitService.clone(repository, localPath)
-                                     )
-                             );
-
-        clonedProjects.toIterable()
-                      .forEach(tuple -> {
-                          final GitlabProject project = tuple._1;
-                          final Either<Throwable, Git> gitRepoOrError = tuple._2;
-                          GitCloneResults.log(log, gitRepoOrError,
-                                  () -> String.format("Project '%s' updated.", project.getNameWithNamespace()));
-                      });
+        gitlabService.getGitlabGroupProjects(group)
+                     .map(project -> new CloneOutcome(project, cloneProject(project)))
+                     .toIterable()
+                     .forEach(outcome -> GitCloneResults.log(log, outcome.result(),
+                             () -> "Project '%s' updated.".formatted(outcome.project().nameWithNamespace())));
 
         log.info("All done.");
     }
 
+    private Either<Throwable, Git> cloneProject(GitlabProject project) {
+        final GitRepository repository = buildGitRepository(project);
+        return recurseSubmodules
+                ? gitService.cloneOrInitSubmodules(repository, localPath)
+                : gitService.clone(repository, localPath);
+    }
+
     private GitRepository buildGitRepository(GitlabProject project) {
         return GitRepository.builder()
-                            .name(project.getNameWithNamespace())
-                            .path(project.getPathWithNamespace())
-                            .cloneUrlSsh(project.getSshUrlToRepo())
-                            .cloneUrlHttps(project.getHttpUrlToRepo())
+                            .name(project.nameWithNamespace())
+                            .path(project.pathWithNamespace())
+                            .cloneUrlSsh(project.sshUrlToRepo())
+                            .cloneUrlHttps(project.httpUrlToRepo())
                             .build();
+    }
+
+    private record CloneOutcome(GitlabProject project, Either<Throwable, Git> result) {
     }
 }

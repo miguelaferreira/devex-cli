@@ -6,16 +6,16 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
 import io.micronaut.logging.LogLevel;
 import io.micronaut.logging.LoggingSystem;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import jakarta.inject.Inject;
 import java.io.BufferedReader;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import java.io.UncheckedIOException;
 
 @Slf4j
 @Command(
@@ -78,8 +78,12 @@ public class DevexCommand {
     )
     private boolean trace;
 
+    private final LoggingSystem loggingSystem;
+
     @Inject
-    LoggingSystem loggingSystem;
+    public DevexCommand(LoggingSystem loggingSystem) {
+        this.loggingSystem = loggingSystem;
+    }
 
     static int execute(String[] args) {
         try (ApplicationContext ctx = ApplicationContext.builder(GitlabCloneCommand.class, Environment.CLI).start()) {
@@ -132,18 +136,20 @@ public class DevexCommand {
     static class AppVersionProvider implements CommandLine.IVersionProvider {
 
         public String getVersionText() {
-            return String.join("", new AppVersionProvider().getVersion());
+            return String.join("", getVersion());
         }
 
         @Override
         public String[] getVersion() {
-            final InputStream in = AppVersionProvider.class.getResourceAsStream("/VERSION");
-            if (in != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String version = reader.lines().collect(Collectors.joining());
-                return new String[]{"java: " + System.getProperty("java.version") + "\ndevex cli: v" + version};
-            } else {
-                return new String[]{"No version"};
+            try (var in = AppVersionProvider.class.getResourceAsStream("/VERSION")) {
+                if (in == null) {
+                    return new String[]{"No version"};
+                }
+                final var reader = new BufferedReader(new InputStreamReader(in));
+                final var version = String.join("", reader.lines().toList());
+                return new String[]{"java: %s\ndevex cli: v%s".formatted(System.getProperty("java.version"), version)};
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         }
     }

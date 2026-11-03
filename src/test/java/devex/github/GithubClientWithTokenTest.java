@@ -26,7 +26,7 @@ class GithubClientWithTokenTest {
         final Optional<GithubOrganization> maybeOrg = client.getOrganization(ORGANIZATION);
 
         assertThat(maybeOrg).isNotEmpty();
-        assertThat(maybeOrg.get().getName()).isEqualTo(ORGANIZATION);
+        assertThat(maybeOrg.get().name()).isEqualTo(ORGANIZATION);
     }
 
     @Test
@@ -39,7 +39,7 @@ class GithubClientWithTokenTest {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).isNotEmpty()
-                                            .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase(ORGANIZATION));
+                                            .allSatisfy(repository -> assertThat(repository.fullName()).containsIgnoringCase(ORGANIZATION));
     }
 
     @Test
@@ -47,7 +47,7 @@ class GithubClientWithTokenTest {
         final Optional<GithubOrganization> maybeUser = client.getUser(USER);
 
         assertThat(maybeUser).isNotEmpty();
-        assertThat(maybeUser.get().getName()).isEqualTo(USER);
+        assertThat(maybeUser.get().name()).isEqualTo(USER);
     }
 
     @Test
@@ -60,6 +60,6 @@ class GithubClientWithTokenTest {
         assertThat(response.getStatus().getCode()).isEqualTo(HttpStatus.OK.getCode());
         assertThat(response.getBody()).isNotEmpty();
         assertThat(response.getBody().get()).isNotEmpty()
-                                            .allSatisfy(repository -> assertThat(repository.getFullName()).containsIgnoringCase(USER));
+                                            .allSatisfy(repository -> assertThat(repository.fullName()).containsIgnoringCase(USER));
     }
 }

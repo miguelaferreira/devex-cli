@@ -124,6 +124,8 @@ tasks.withType(Test).configureEach {
     environment "GITHUB_TOKEN", System.getenv('GITHUB_TOKEN') ?: ''
 }
 
+tasks.withType(JavaCompile).configureEach { options.compilerArgs.addAll(["-Xlint:deprecation"]) }
+
 processResources {
     from("VERSION")
 }

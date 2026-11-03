@@ -1,20 +1,11 @@
 package devex.gitlab;
 
+import io.micronaut.serde.annotation.Serdeable;
 import tools.jackson.core.Version;
 import tools.jackson.core.util.VersionUtil;
-import io.micronaut.serde.annotation.Serdeable;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @Serdeable
-@Data
-@AllArgsConstructor
-public class GitlabVersion {
-    String version;
-    String revision;
-
-    public GitlabVersion() {
-    }
+public record GitlabVersion(String version, String revision) {
 
     public boolean isBefore(String lowerBound) {
         return compare(lowerBound) < 0;
@@ -28,13 +19,8 @@ public class GitlabVersion {
     }
 
     static Version parse(String text) {
-        final String versionText;
-        if (text.contains("-")) {
-            final String[] mainSplit = text.split("-");
-            versionText = mainSplit[0];
-        } else {
-            versionText = text;
-        }
+        final int suffixStart = text.indexOf('-');
+        final String versionText = suffixStart < 0 ? text : text.substring(0, suffixStart);
         return VersionUtil.parseVersion(versionText, null, null);
     }
 

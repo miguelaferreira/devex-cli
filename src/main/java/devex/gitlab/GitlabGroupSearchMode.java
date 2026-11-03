@@ -6,26 +6,18 @@ public enum GitlabGroupSearchMode {
     NAME, FULL_PATH, ID;
 
     public String textualQualifier() {
-        switch (this) {
-            case NAME:
-                return "named";
-            case FULL_PATH:
-                return "with full path";
-            case ID:
-                return "identified by";
-        }
-        throw new IllegalArgumentException("There is no qualifier defined for " + this);
+        return switch (this) {
+            case NAME -> "named";
+            case FULL_PATH -> "with full path";
+            case ID -> "identified by";
+        };
     }
 
     public Predicate<GitlabGroup> groupPredicate(String search) {
-        switch (this) {
-            case NAME:
-                return group -> group.getName().equalsIgnoreCase(search);
-            case FULL_PATH:
-                return group -> group.getFullPath().equalsIgnoreCase(search);
-            case ID:
-                return group -> group.getId().equalsIgnoreCase(search);
-        }
-        throw new IllegalArgumentException("There is no predicate defined for " + this);
+        return switch (this) {
+            case NAME -> group -> group.name().equalsIgnoreCase(search);
+            case FULL_PATH -> group -> group.fullPath().equalsIgnoreCase(search);
+            case ID -> group -> group.id().equalsIgnoreCase(search);
+        };
     }
 }

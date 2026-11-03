@@ -123,7 +123,7 @@ public class GitService {
     }
 
     public Either<Throwable, Git> cloneOrInitSubmodules(GitRepository repository, String cloneDirectory) {
-        final String repositoryName = repository.getName();
+        final String repositoryName = repository.name();
         log.trace("Cloning or initializing submodules for repository '{}' under directory '{}'", repositoryName, cloneDirectory);
         return tryClone(repository, cloneDirectory, true)
                 .recoverWith(t -> tryInitSubmodules(repository, cloneDirectory))
@@ -131,7 +131,7 @@ public class GitService {
     }
 
     public Either<Throwable, Git> clone(final GitRepository repository, final String cloneDirectory) {
-        final String repositoryName = repository.getName();
+        final String repositoryName = repository.name();
         log.trace("Cloning repository '{}' under directory '{}'", repositoryName, cloneDirectory);
         if (isAlreadyCloned(repository, cloneDirectory)) {
             return Either.left(new RepositoryAlreadyClonedException(repositoryName));
@@ -141,8 +141,7 @@ public class GitService {
     }
 
     private boolean isAlreadyCloned(final GitRepository repository, final String cloneDirectory) {
-        final String pathToRepo = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
-        final File repositoryDirectory = new File(pathToRepo);
+        final File repositoryDirectory = repositoryDirectory(repository, cloneDirectory);
         if (!repositoryDirectory.isDirectory()) {
             return false;
         }
@@ -152,7 +151,7 @@ public class GitService {
     }
 
     private Try<Git> tryClone(final GitRepository repository, final String cloneDirectory, final boolean cloneSubmodules) {
-        String repositoryName = repository.getName();
+        final String repositoryName = repository.name();
         return Try.of(() -> clone(repository, cloneDirectory, cloneSubmodules))
                   .onSuccess(gitRepo -> log.trace("Cloned repository '{}' to '{}'", repositoryName, getDirectory(gitRepo)))
                   .onFailure(t -> logFailedClone(repositoryName, t));
@@ -161,12 +160,15 @@ public class GitService {
     private Try<Git> tryInitSubmodules(GitRepository repository, String cloneDirectory) {
         return Try.of(() -> initSubmodules(repository, cloneDirectory))
                   .onSuccess(gitRepo -> log.trace("Initialized submodules of git repository at '{}'", getDirectory(gitRepo)))
-                  .onFailure(t2 -> logFailedSubmoduleInit(repository.getName(), t2));
+                  .onFailure(t2 -> logFailedSubmoduleInit(repository.name(), t2));
     }
 
     protected Git openRepository(GitRepository repository, String cloneDirectory) throws IOException {
-        String pathToRepo = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
-        return Git.open(new File(pathToRepo));
+        return Git.open(repositoryDirectory(repository, cloneDirectory));
+    }
+
+    private static File repositoryDirectory(GitRepository repository, String cloneDirectory) {
+        return new File(cloneDirectory + FileSystems.getDefault().getSeparator() + repository.path());
     }
 
     private void logFailedClone(String repositoryName, Throwable throwable) {
@@ -178,28 +180,27 @@ public class GitService {
     }
 
     protected Git clone(GitRepository repository, String cloneDirectory, boolean cloneSubmodules) throws GitAPIException {
-        String pathToClone = cloneDirectory + FileSystems.getDefault().getSeparator() + repository.getPath();
-
         final CloneCommand cloneCommand = Git.cloneRepository();
         switch (cloneProtocol) {
-            case SSH:
-                cloneCommand.setURI(repository.getCloneUrlSsh());
+            case SSH -> {
+                cloneCommand.setURI(repository.cloneUrlSsh());
                 cloneCommand.setTransportConfigCallback(transport -> {
-                    SshTransport sshTransport = (SshTransport) transport;
-                    sshTransport.setSshSessionFactory(sshSessionFactory);
+                    if (transport instanceof SshTransport sshTransport) {
+                        sshTransport.setSshSessionFactory(sshSessionFactory);
+                    }
                 });
-                break;
-            case HTTPS:
-                cloneCommand.setURI(repository.getCloneUrlHttps());
+            }
+            case HTTPS -> {
+                cloneCommand.setURI(repository.cloneUrlHttps());
                 final String password = Objects.requireNonNullElse(httpsPassword, "");
                 if (!password.isBlank()) {
-                    cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(HTTPS_USERNAME, httpsPassword));
+                    cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(HTTPS_USERNAME, password));
                 } else {
                     log.debug("Credentials for HTTPS remote not set, repository to clone must be public.");
                 }
-                break;
+            }
         }
-        cloneCommand.setDirectory(new File(pathToClone));
+        cloneCommand.setDirectory(repositoryDirectory(repository, cloneDirectory));
         cloneCommand.setCloneSubmodules(cloneSubmodules);
         cloneCommand.setCloneAllBranches(false);
         cloneCommand.setNoTags();

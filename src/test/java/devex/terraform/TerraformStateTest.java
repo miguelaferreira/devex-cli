@@ -20,7 +20,7 @@ class TerraformStateTest {
         final TerraformState terraformState = mapper.readValue(Files.readAllBytes(FIXTURE), TerraformState.class);
 
         assertThat(terraformState).isNotNull();
-        assertThat(terraformState.getTerraformVersion()).isEqualTo("1.0.8");
-        assertThat(terraformState.getResources()).isNotEmpty().hasSizeGreaterThan(1);
+        assertThat(terraformState.terraformVersion()).isEqualTo("1.0.8");
+        assertThat(terraformState.resources()).isNotEmpty().hasSizeGreaterThan(1);
     }
 }

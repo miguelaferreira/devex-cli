@@ -72,7 +72,7 @@ public class GithubService {
                      .map(stream -> stream.filter(element -> element.contains("rel=\"next\"")))
                      .flatMap(stream -> Option.of(stream.getOrNull()))
                      // split link entry and get first part (the link wrapped in '< >')
-                     .map(nextPageEntry -> Arrays.asList(nextPageEntry.split(";")).get(0).trim())
+                     .map(nextPageEntry -> nextPageEntry.split(";")[0].trim())
                      // unwrap link
                      .map(wrappedLink -> wrappedLink.substring(1, wrappedLink.length() - 1))
                      // get query from link, example => ?page=2,something=else
@@ -83,7 +83,7 @@ public class GithubService {
                      .map(stream -> stream.filter(element -> element.contains("page")))
                      .flatMap(stream -> Option.of(stream.getOrNull()))
                      // split page parameter and get the page number
-                     .map(parameter -> Arrays.asList(parameter.split("=")).get(1))
+                     .map(parameter -> parameter.split("=")[1])
                      // if something went wrong short-circuit with 0 which will make pagination algorithm stop
                      .getOrElse("0");
     }
