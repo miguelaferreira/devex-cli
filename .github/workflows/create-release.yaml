@@ -5,6 +5,9 @@ on:
     tags:
       - v*
 
+permissions:
+  contents: read
+
 jobs:
   build_release:
     name: "Build release"
@@ -19,7 +22,7 @@ jobs:
           - { runner: macos-latest,     os: macOS, arch: arm64 }
     steps:
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Set up GraalVM"
         uses: graalvm/setup-graalvm@v1
@@ -30,9 +33,9 @@ jobs:
           cache: 'gradle'
 
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Set up Terraform"
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: 1.9.8
+          terraform_version: 1.17.1
           terraform_wrapper: false
 
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Setup SSH"
@@ -69,7 +72,7 @@ jobs:
           DEVEX_SSH_INTEGRATION_TESTS: "true"
 
       - name: "[${{ matrix.os }}-${{ matrix.arch }}] Upload test reports"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-reports-${{ matrix.os }}-${{ matrix.arch }}
@@ -87,7 +90,7 @@ jobs:
         run: sudo rm -rf ~/.ssh
 
       - name: '[${{ matrix.os }}-${{ matrix.arch }}] Upload artifacts'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: devex-${{ matrix.os }}-${{ matrix.arch }}
           path: build/native/nativeCompile/devex
@@ -97,23 +100,24 @@ jobs:
     name: "Create release"
     needs: build_release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       release_body_file: "body.txt"
     outputs:
       new_version: ${{ steps.release-files.outputs.new_version }}
-      all_files_sha: ${{ steps.release-files.outputs.all_files_sha }}
     steps:
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Download all workflow run artifacts"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: "artifacts"
 
       - name: "Generate changelog"
         id: changelog
-        uses: metcalfc/changelog-generator@v4.6.2
+        uses: metcalfc/changelog-generator@v5
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -130,7 +134,6 @@ jobs:
           for file in *; do sha256sum "${file}" > "${file}.sha256sum"; done
           tar czf all-files-${version}.tar.gz *
           sha256sum all-files-${version}.tar.gz > all-files-${version}.tar.gz.sha256sum
-          all_files_sha="$( cat all-files-${version}.tar.gz.sha256sum | cut -f 1 -d ' ' )"
           cd ..
 
           # Create release text
@@ -149,13 +152,12 @@ jobs:
 
           echo "${change_log}" >> "${release_body_file}"
           echo "new_version=${version}" >> "$GITHUB_OUTPUT"
-          echo "all_files_sha=${all_files_sha}" >> "$GITHUB_OUTPUT"
         env:
           tag_ref: ${{ github.ref }}
           change_log: ${{ steps.changelog.outputs.changelog }}
 
       - name: "Create release"
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: ${{ env.release_body_file }}
           files: release/*
@@ -169,45 +171,39 @@ jobs:
     needs: create_release
     runs-on: ubuntu-latest
     env:
-      new_version: ${{needs.create_release.outputs.new_version}}
-      all_files_sha: ${{needs.create_release.outputs.all_files_sha}}
+      new_version: ${{ needs.create_release.outputs.new_version }}
     steps:
-      - name: "Checkout sources"
-        uses: actions/checkout@v4
+      - name: "Checkout tap"
+        uses: actions/checkout@v7
         with:
           repository: 'miguelaferreira/homebrew-tools'
 
-      - name: "Update formula native image"
-        id: update-formula
-        run: |
-          archive="${new_version}.tar.gz"
-          curl -L -O "https://github.com/miguelaferreira/devex-cli/archive/${archive}"
-          sha256sum "${archive}"
-          archive_sha="$( sha256sum "${archive}" | sed -e "s/  ${archive}//" )"
-
-          echo "archive-sha=${archive_sha}" >> "$GITHUB_OUTPUT"
-
-          scripts/update-formula.sh "Formula/devex-cli-jdk.rb" "${new_version}" "${archive_sha}"
-          scripts/update-formula.sh "Formula/devex-cli.rb" "${new_version}" "${all_files_sha}"
+      # The script downloads the release .sha256sum assets and the source archive itself
+      # (curl -fsSL) into a temporary directory under TMPDIR, so nothing but the two
+      # formulas changes in the checkout.
+      - name: "Update formulas"
+        run: scripts/update-formula.sh "${new_version}"
         env:
-          new_version: ${{ env.new_version }}
-          all_files_sha: ${{ env.all_files_sha }}
+          TMPDIR: ${{ runner.temp }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.BOT_GITHUB_PAT_PUBLIC_REPO }}
-          commit-message: "Update devex-cli formula to version ${{ env.new_version }}"
+          commit-message: "Update devex-cli formulas to version ${{ env.new_version }}"
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           base: main
           branch: update-devex-cli-formula
           delete-branch: true
+          # Only ever commit the formulas, never downloaded files.
+          add-paths: |
+            Formula/devex-cli.rb
+            Formula/devex-cli-jdk.rb
           title: '[New tool release] DevEx cli update'
           body: |
             This PR
-            - Updates devex-cli formulas to version ${{ env.new_version }}
-            - Source archive sha is `${{ steps.update-formula.outputs.archive-sha }}`
-            - All files package sha is `${{ env.all_files_sha }}`
+            - Updates the devex-cli and devex-cli-jdk formulas to version ${{ env.new_version }}
+            - Native binary checksums come from the release's `.sha256sum` assets
             - Auto-generated from [devex-cli Continuous Delivery workflow][1] ([workflow src][2])
 
             [1]: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

@@ -80,6 +80,19 @@ cd -
 # Terraform
 ################################################
 terraform_module_dir="src/test/resources/terraform/module1"
+repo_root="$(pwd)"
+
+# Make sure the applied resources are destroyed even if a later step fails.
+# Registered before `terraform apply` so a partially applied state is cleaned up too.
+destroy_terraform() {
+  local exit_code=$?
+  trap - EXIT
+  say "[TERRAFORM] Destroying resources"
+  (cd "${repo_root}/${terraform_module_dir}" && terraform destroy -auto-approve) || { [[ ${exit_code} -ne 0 ]] || exit_code=1; }
+  exit "${exit_code}"
+}
+trap destroy_terraform EXIT
+
 cd "${terraform_module_dir}"
 terraform init -input=false
 terraform apply -auto-approve
@@ -90,6 +103,3 @@ TERRAFORM_SECRETS="random_string" build/native/nativeCompile/devex terraform tai
 say "[TERRAFORM] Asking to untaint secrets"
 TERRAFORM_SECRETS="random_string" build/native/nativeCompile/devex terraform taint-secrets -u "${terraform_module_dir}"
 
-cd "${terraform_module_dir}"
-terraform destroy -auto-approve
-cd -

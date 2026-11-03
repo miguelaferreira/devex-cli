@@ -8,13 +8,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: "Build code"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     steps:
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Set up GraalVM"
         uses: graalvm/setup-graalvm@v1
@@ -25,9 +32,9 @@ jobs:
           cache: 'gradle'
 
       - name: "Set up Terraform"
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: 1.9.8
+          terraform_version: 1.17.1
           terraform_wrapper: false
 
       - name: "Setup SSH"
@@ -40,9 +47,11 @@ jobs:
           cat << EOF > ~/.ssh/config
           Host gitlab.com
             IdentityFile ~/.ssh/id_ed25519
+            ConnectTimeout 30
 
           Host github.com
             IdentityFile ~/.ssh/id_rsa
+            ConnectTimeout 30
           EOF
 
           chmod -R 500 ~/.ssh
@@ -51,14 +60,14 @@ jobs:
           bot_devex_ssh_private_key_ed25519: ${{ secrets.BOT_DEVEX_SSH_PRIVATE_KEY_ED25519 }}
 
       - name: "Gradle build"
-        run: ./gradlew build
+        run: env -u SSH_AUTH_SOCK ./gradlew build
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
           DEVEX_SSH_INTEGRATION_TESTS: "true"
 
       - name: "Upload Test Reports"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-reports
@@ -72,13 +81,13 @@ jobs:
           files: build/test-results/test/*.xml
 
       - name: "Build native image"
-        run: ./gradlew nativeCompile
+        run: env -u SSH_AUTH_SOCK ./gradlew nativeCompile
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}
 
       - name: "Run and test native binary"
-        run: .github/scripts/run-native-binary.sh
+        run: env -u SSH_AUTH_SOCK .github/scripts/run-native-binary.sh
         env:
           GITLAB_TOKEN: ${{ secrets.BOT_GITLAB_TOKEN_READ_API }}
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN_READ_ORG_AND_REPO }}

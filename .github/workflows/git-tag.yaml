@@ -5,33 +5,34 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   tag:
     name: "Create git tag"
     runs-on: ubuntu-latest
+    # Pushes the tag and the version bump over SSH using the bot key, so the
+    # job token itself only needs to read the repository.
+    permissions:
+      contents: read
     env:
-      tooling_dir: ${{ github.workspace }}/../tooling
       ssh_dir: /home/runner/.ssh
+      # Pinned commit of miguelaferreira/semver_bash (was: master)
+      semver_bash_sha: d7d570e9ab64ed432189a55e17cdb1305b401d7b
     if: "!contains(github.event.head_commit.message, 'Increment version')"
     steps:
-      - name: "Cache tooling"
-        uses: actions/cache@v4
-        with:
-          path: ${tooling_dir}
-          key: ${{ runner.os }}-devex-git-tag
-
       - name: "Setup tools"
         run: |
-          mkdir -p ${tooling_dir}
-          cd ${tooling_dir}
-          wget --no-clobber https://github.com/miguelaferreira/semver_bash/archive/master.zip
-          unzip master.zip
-          cd semver_bash-master
+          cd "${RUNNER_TEMP}"
+          curl -fsSL -o semver_bash.zip "https://github.com/miguelaferreira/semver_bash/archive/${semver_bash_sha}.zip"
+          unzip -q semver_bash.zip
+          cd "semver_bash-${semver_bash_sha}"
           sudo mv semver.sh bump.sh /bin
           sudo chmod +x /bin/bump.sh
 
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Bump version number"
         id: bump
@@ -78,4 +79,5 @@ jobs:
           commit_message: "Increment version from '${{ steps.bump.outputs.version }}' to '${{ steps.bump.outputs.new-version }}'"
 
       - name: "Clean up"
+        if: ${{ always() }}
         run: sudo rm -rf ${ssh_dir}
