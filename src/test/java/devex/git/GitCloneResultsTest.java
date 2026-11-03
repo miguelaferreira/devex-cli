@@ -21,9 +21,15 @@ class GitCloneResultsTest {
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(GitCloneResultsTest.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
+    private Level originalLevel;
 
     @BeforeEach
     void setUp() {
+        // The effective level of this logger depends on whichever logback configuration
+        // (logback.xml, logback-test.xml or logback-full-logs.xml) was loaded last in this JVM,
+        // which makes INFO events disappear depending on test order. Pin it explicitly.
+        originalLevel = logger.getLevel();
+        logger.setLevel(Level.INFO);
         appender.start();
         logger.addAppender(appender);
     }
@@ -31,6 +37,8 @@ class GitCloneResultsTest {
     @AfterEach
     void tearDown() {
         logger.detachAppender(appender);
+        appender.stop();
+        logger.setLevel(originalLevel);
     }
 
     @Test
