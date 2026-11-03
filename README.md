@@ -83,6 +83,24 @@ The binary will be created under `build/native/nativeCompile/devex`. To execute 
 build/native/nativeCompile/devex -h
 ```
 
+### Testing
+
+Besides the Gradle tests, two scripts exercise the built tool end to end against real GitHub and GitLab
+(they need `GITHUB_TOKEN` / `GITLAB_TOKEN` and SSH keys):
+
+- [`.github/scripts/run-native-binary.sh`](.github/scripts/run-native-binary.sh) is the smoke test CI runs on the
+  native binary (`build/native/nativeCompile/devex`): GitLab and GitHub clones over SSH and HTTPS, and a Terraform
+  taint/untaint round trip.
+- [`scripts/e2e-local.sh`](scripts/e2e-local.sh) is the pre-release check to run on your own machine (macOS arm64 or
+  Linux, with GraalVM 25, Terraform and, for the `brew` stage, Homebrew). It builds and tests, compiles the native
+  image, runs the smoke script, checks the jar, and installs both Homebrew formulas from the tap against a local
+  fake release. Pick stages with `--only build,native,smoke,jar,brew`; see `scripts/e2e-local.sh --help`.
+
+```bash
+scripts/e2e-local.sh                      # everything
+scripts/e2e-local.sh --only native,smoke  # just the native image and its smoke test
+```
+
 ### GraalVM native-image notes
 
 Reflection / serialization metadata for third-party libraries is provided by the
