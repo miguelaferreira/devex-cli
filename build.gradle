@@ -41,7 +41,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic'
     runtimeOnly 'org.yaml:snakeyaml'
 
-    implementation 'io.vavr:vavr:0.10.6'
+    implementation 'io.vavr:vavr:1.1.0'
 
     implementation "org.eclipse.jgit:org.eclipse.jgit:${jgitVersion}"
     implementation "org.eclipse.jgit:org.eclipse.jgit.ssh.apache:${jgitVersion}"
