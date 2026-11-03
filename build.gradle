@@ -1,8 +1,7 @@
 plugins {
-    id("io.micronaut.application") version "5.0.0"
-    id("io.micronaut.aot") version "5.0.0"
-    id "com.gradleup.shadow" version "9.4.2"
-
+    id("io.micronaut.application") version "5.0.2"
+    id("io.micronaut.aot") version "5.0.2"
+    id "com.gradleup.shadow" version "9.6.1"
 }
 
 version = rootProject.file('VERSION').text.trim()
@@ -13,7 +12,7 @@ repositories {
 }
 
 micronaut {
-    version "5.0.1"
+    version "5.2.4"
     testRuntime("junit5")
     processing {
         incremental(true)
@@ -21,9 +20,11 @@ micronaut {
     }
 }
 
+def jgitVersion = "7.8.0.202609011348-r"
+
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.46'
-    annotationProcessor 'org.projectlombok:lombok:1.18.46'
+    compileOnly 'org.projectlombok:lombok:1.18.48'
+    annotationProcessor 'org.projectlombok:lombok:1.18.48'
 
     annotationProcessor("info.picocli:picocli-codegen")
     implementation("info.picocli:picocli")
@@ -42,8 +43,8 @@ dependencies {
 
     implementation 'io.vavr:vavr:0.10.6'
 
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
-    implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.6.0.202603022253-r'
+    implementation "org.eclipse.jgit:org.eclipse.jgit:${jgitVersion}"
+    implementation "org.eclipse.jgit:org.eclipse.jgit.ssh.apache:${jgitVersion}"
     // Apache MINA SSHD only handles Ed25519 (ssh-ed25519) keys when this EdDSA
     // provider is on the classpath; without it MINA silently skips ed25519
     // known_hosts entries and host keys, so hosts that present an Ed25519 key
@@ -53,13 +54,13 @@ dependencies {
     implementation 'net.i2p.crypto:eddsa:0.3.0'
     // Enables SSH agent integration (e.g. macOS / ssh-agent) for JGit when users have
     // `IdentityAgent SSH_AUTH_SOCK` in their ~/.ssh/config; transparently no-op otherwise.
-    runtimeOnly 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache.agent:7.6.0.202603022253-r'
+    runtimeOnly "org.eclipse.jgit:org.eclipse.jgit.ssh.apache.agent:${jgitVersion}"
 
     implementation 'org.apache.commons:commons-exec:1.6.0'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.46'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
-    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testCompileOnly 'org.projectlombok:lombok:1.18.48'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.assertj:assertj-vavr:0.5.1'
 }
 
