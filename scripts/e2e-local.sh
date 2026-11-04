@@ -16,7 +16,8 @@
 #                         (default https://github.com/miguelaferreira/homebrew-tools)
 #   --tap-branch BRANCH   tap branch to test with (default claude/tender-maxwell-wrnoym)
 #   --force-brew          let the brew stage uninstall devex-cli / devex-cli-jdk and
-#                         replace an already tapped miguelaferreira/tools (restored after)
+#                         replace an already tapped miguelaferreira/tools (both are
+#                         restored afterwards: tap re-tapped, formulae reinstalled)
 #   --no-ssh-agent        unset SSH_AUTH_SOCK for the whole run (like CI's
 #                         `env -u SSH_AUTH_SOCK`), so SSH uses the ~/.ssh key files. This
 #                         is done automatically when the agent does not answer within 5s.
@@ -48,8 +49,8 @@
 #             throwaway tap name would not match). The brew stage therefore refuses to
 #             run if that tap or either formula is already present, unless --force-brew;
 #             with --force-brew an existing tap is untapped and re-tapped from its
-#             original remote and branch at the end. Uninstalled formulae are NOT
-#             reinstalled, reinstall them yourself.
+#             original remote and branch at the end, and formulae it uninstalled are
+#             reinstalled from that tap.
 #           - the formula URLs in the tapped copy are then rewritten to the local
 #             server; each formula is installed, `brew test`ed, `devex -V` and a GitHub
 #             HTTPS clone are run with the installed binary, the jdk launcher is checked
@@ -207,6 +208,12 @@ cleanup() {
         git -C "$(brew --repository "${TAP_NAME}")" checkout "${names}"
       fi
     fi
+  fi
+  if [ -f "${WORK}/state/reinstall" ] && command -v brew >/dev/null 2>&1; then
+    for f in $(cat "${WORK}/state/reinstall"); do
+      say "Reinstalling ${f} (uninstalled by --force-brew)"
+      brew install "${TAP_NAME}/${f}" || warn "could not reinstall ${f}; run: brew install ${TAP_NAME}/${f}"
+    done
   fi
   if [ -n "${WORK:-}" ] && [ -d "${WORK}" ]; then rm -rf "${WORK}"; fi
   exit "${rc}"
@@ -611,7 +618,8 @@ brew_preconditions() {
     installed="$(brew list --formula --versions "${f}" 2>/dev/null || true)"
     if [ -n "${installed}" ]; then
       if [ "${FORCE_BREW}" -eq 1 ]; then
-        warn "--force-brew: uninstalling ${f} (${installed}); it will NOT be reinstalled"
+        warn "--force-brew: uninstalling ${f} (${installed}); it is reinstalled at the end"
+        echo "${f}" >> "${WORK}/state/reinstall"
         brew uninstall --force "${f}"
       else
         echo "${f} is already installed; refusing to touch it (use --force-brew to uninstall it)" >&2
