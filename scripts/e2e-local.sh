@@ -17,6 +17,9 @@
 #   --tap-branch BRANCH   tap branch to test with (default claude/tender-maxwell-wrnoym)
 #   --force-brew          let the brew stage uninstall devex-cli / devex-cli-jdk and
 #                         replace an already tapped miguelaferreira/tools (restored after)
+#   --no-ssh-agent        unset SSH_AUTH_SOCK for the whole run (like CI's
+#                         `env -u SSH_AUTH_SOCK`), so SSH uses the ~/.ssh key files. This
+#                         is done automatically when the agent does not answer within 5s.
 #   -h, --help            this text
 #
 # Stages:
@@ -71,6 +74,7 @@ BINARY=""
 TAP_REPO="https://github.com/miguelaferreira/homebrew-tools"
 TAP_BRANCH="claude/tender-maxwell-wrnoym"
 FORCE_BREW=0
+NO_SSH_AGENT=0
 TAP_NAME="miguelaferreira/tools"
 
 usage() { sed -n '3,/^$/p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
@@ -86,6 +90,7 @@ while [ $# -gt 0 ]; do
     --tap-repo) [ $# -ge 2 ] || die "--tap-repo needs a value"; TAP_REPO="$2"; shift 2 ;;
     --tap-branch) [ $# -ge 2 ] || die "--tap-branch needs a value"; TAP_BRANCH="$2"; shift 2 ;;
     --force-brew) FORCE_BREW=1; shift ;;
+    --no-ssh-agent) NO_SSH_AGENT=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) usage >&2; die "unknown option $1" ;;
   esac
@@ -140,6 +145,25 @@ LAST_CHECK=""
 section() { printf '\n==============================================================================\n%s\n==============================================================================\n' "$*"; }
 say() { echo "==> $*"; }
 warn() { echo "WARNING: $*" >&2; }
+
+# run_with_timeout SECS CMD...: run CMD, killing it after SECS seconds (exit 124).
+# Portable replacement for coreutils `timeout`, which macOS does not ship.
+run_with_timeout() {
+  local secs="$1" pid ticks=0
+  shift
+  "$@" &
+  pid=$!
+  while kill -0 "${pid}" 2>/dev/null; do
+    if [ "${ticks}" -ge $((secs * 10)) ]; then
+      kill "${pid}" 2>/dev/null || true
+      wait "${pid}" 2>/dev/null || true
+      return 124
+    fi
+    sleep 0.1
+    ticks=$((ticks + 1))
+  done
+  wait "${pid}"
+}
 
 sha256_of() {
   if command -v sha256sum >/dev/null 2>&1; then
@@ -314,8 +338,17 @@ preflight() {
   fi
 
   local agent_rc=2
-  if command -v ssh-add >/dev/null 2>&1; then
-    set +e; ssh-add -l >/dev/null 2>&1; agent_rc=$?; set -e
+  if [ "${NO_SSH_AGENT}" -eq 1 ]; then
+    unset SSH_AUTH_SOCK
+    echo "SSH agent  : disabled (--no-ssh-agent); SSH uses ~/.ssh key files"
+  elif [ -n "${SSH_AUTH_SOCK:-}" ] && command -v ssh-add >/dev/null 2>&1; then
+    # A stale or wedged agent socket (e.g. macOS launchd's ssh-agent) makes `ssh-add -l`
+    # block forever, and JGit's agent connector would block the same way during clones.
+    set +e; run_with_timeout 5 ssh-add -l </dev/null >/dev/null 2>&1; agent_rc=$?; set -e
+    if [ "${agent_rc}" -eq 124 ]; then
+      warn "the SSH agent at SSH_AUTH_SOCK=${SSH_AUTH_SOCK} did not answer within 5s; unsetting SSH_AUTH_SOCK for this run (same as CI's \`env -u SSH_AUTH_SOCK\`) so SSH uses the ~/.ssh key files."
+      unset SSH_AUTH_SOCK
+    fi
   fi
   local keyfiles=0 k
   for k in "${HOME}"/.ssh/id_*; do
@@ -526,7 +559,7 @@ smoke_run() {
   find "${stage}/src" -name .terraform -type d -prune -exec rm -rf {} + 2>/dev/null || true
   find "${stage}/src" -name 'terraform.tfstate*' -type f -exec rm -f {} + 2>/dev/null || true
   say "Running .github/scripts/run-native-binary.sh in ${stage}"
-  say "(binary under test: ${BINARY}; SSH_AUTH_SOCK is kept, CI unsets it to exercise key files)"
+  say "(binary under test: ${BINARY}; SSH_AUTH_SOCK is ${SSH_AUTH_SOCK:+kept}${SSH_AUTH_SOCK:-unset}; CI unsets it to exercise key files)"
   ( cd "${stage}" && bash "${ROOT}/.github/scripts/run-native-binary.sh" )
 }
 
